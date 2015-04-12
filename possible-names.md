@@ -27,8 +27,8 @@ Generic TLDs are **bold**, domain hacks are ***bold-italic***.
 ***nw.tn*** *$35*
 ***new.tn*** *$35*
 
-### <xxx> Sim
-<xxx>s.im
+### \[xxx\] Sim
+\[xxx\]s.im
 
 ### Collisio
 **collis.io** *$33*
