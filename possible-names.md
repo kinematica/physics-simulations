@@ -2,44 +2,42 @@
 
 Generic TLDs are **bold**, domain hacks are ***bold-italic***.
 
-# Domain Name Hacks
-
-## KINEMATICA
+### Kinematica
 ***kinemati.ca*** *$12*
 
-## GALILEI
+### Galilei
 **galilei.co** *$9*
 
-## KINETICA
+### Kinetica
 **kinetica.io** *$33*
 
-## BOHR
+### Bohr
 **bohr.io** *$33*
 
-## HAMILTON
+### Hamilton
 ***hml.tn*** *$35*
 ***haml.tn*** *$35*
 
-## FIZICO
+### Fizico
 **fizi.co** *$9*
 
-## NEWTON
+### Newton
 ***newton.ph*** *$70*
 ***nwtn.ph*** *$70*
 ***nw.tn*** *$35*
 ***new.tn*** *$35*
 
-## <xxx> SIM
+### <xxx> Sim
 <xxx>s.im
 
-## COLLISIO
+### Collisio
 **collis.io** *$33*
 
-## LAGRANGE
+### Lagrange
 lagran.ge *seems expensive and hard*
 
-## NOETHER
+### Noether
 noeth.er *.er domains unavailable*
 
-## FEYNMAN
+### Feynman
 feynm.an *.an domains discontinued*
