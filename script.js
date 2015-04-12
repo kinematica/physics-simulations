@@ -13,8 +13,8 @@ var circle = new Konva.Circle({
 	x: stage.getWidth() / 2,
 	y: stage.getHeight() / 2,
 	radius: 70,
-	fill: 'red',
-	stroke: 'black',
+	fill: '#ff0000',       // Doesn't take rgba hex values, nor rgba(r,g,b,a) values; defaults to black
+	stroke: 'black',       // transparency likely its own option?
 	strokeWidth: 4
 });
 
@@ -40,6 +40,16 @@ var rect = new Konva.Rect({
 	stroke: 'black',
 	strokeWidth: 4
 });
+
+var tangle = new Konva.Rect({
+	x: 3 * stage.getWidth() / 4,
+	y: 3 * stage.getHeight() / 4,
+	width: stage.getWidth() / 4,
+	height: stage.getHeight() / 4,
+	fill: '#432323',
+	stroke: '#40303080',
+	strokewidth: 4
+}); 
 
 var arrow = new Konva.Arrow({
 	x: stage.getWidth() / 4,
@@ -109,6 +119,7 @@ layer.add(arrow);
 // layer.add(hexagon);
 layer.add(rect);
 layer.add(circle);
+layer.add(tangle);
 
 // add the layer to the Stage; will the above image be dynamically added?
 stage.add(layer);
