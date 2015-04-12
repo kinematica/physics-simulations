@@ -7,7 +7,7 @@ stw = 4                     // stroke width
 // Set scales
 w = 80;                     // screen width, in m
 ppm = width / w;            // pixels / m
-tscale = 2e-8;              // timescale
+tscale = 1e-8;              // timescale
 
 // Set params (should be user adjustable soon)
 c = 299792458;              // speed of light in m/s
@@ -47,7 +47,7 @@ var mcrf = new Konva.Rect({
     y: height * 1 / 8,
     width: l0*ppm,
     height: height / 4,
-    stroke: 'black',
+    stroke: 'white',
     strokeWidth: stw
 });
 
@@ -59,7 +59,7 @@ var labframe = new Konva.Rect({
     y: height * 5 / 8,
     width: l0*ppm,
     height: height / 4,
-    stroke: 'black',
+    stroke: 'white',
     strokeWidth: stw
 });
 
@@ -70,9 +70,7 @@ var mcrfLamp = new Konva.Circle({
     x: x0*ppm,
     y: height / 4,
     radius: height / 16,
-    stroke: 'black',
     fill: 'yellow',
-    strokeWidth: stw
 });
 
 staticLayer.add(mcrfLamp);
@@ -81,9 +79,7 @@ var labLamp = new Konva.Circle({
     x: x0*ppm,
     y: height * 3 / 4,
     radius: height / 16,
-    stroke: 'black',
     fill: 'yellow',
-    strokeWidth: stw
 });
 
 motionLayer.add(labLamp);
