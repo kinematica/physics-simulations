@@ -1,6 +1,6 @@
 {
   "name": "konva",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "authors": [
     "Eric Rowell",
     "Anton Lavrenov"
@@ -27,14 +27,14 @@
     "Gruntfile.js"
   ],
   "main": "konva.min.js",
-  "_release": "0.8.0",
+  "_release": "0.9.0",
   "_resolution": {
     "type": "version",
-    "tag": "0.8.0",
-    "commit": "63986be549a9c70941193f55ea7bee0945596ab5"
+    "tag": "0.9.0",
+    "commit": "73d507baffb226a05e813e361d452d1a5f921745"
   },
   "_source": "git://github.com/konvajs/konva.git",
-  "_target": "~0.8.0",
+  "_target": "0.9",
   "_originalSource": "konva",
   "_direct": true
 }
