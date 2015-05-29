@@ -1,3 +1,6 @@
+var width = window.innerWidth;
+var height = window.innerHeight;
+
 function writeMessage(message) {
     text.text(message);
     layer.draw();
