@@ -1,6 +1,10 @@
 body {
-	margin: 0;
-	padding: 0;
-	overflow: hidden;
-	background-color: #202020;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #202020;
+}
+
+div.block{
+    overflow:hidden;
 }
