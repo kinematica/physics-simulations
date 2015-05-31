@@ -21,7 +21,7 @@ available. *If you don't have Node/npm installed*,
 These are toy simulations meant as practice for public outreach. Hopefully 
 this will be interesting/intuitive/instructional to someone.
 
-## Useful git commands:
+## Useful git commands
 
 * `git clone <url> <directory name>`
 * `git status` Lists changes, including "staged" changes
@@ -36,4 +36,14 @@ this will be interesting/intuitive/instructional to someone.
 * `git remote add <name> <url>` Add a new remote repository
 * `rm -rf <git directory>` Delete a git working directory without complaints
 
+## Modularity of Visual Style
 
+Modularity is good. Uniform style is good. Here is a list of frequently used 
+objects and primitive shapes that can and should be made modular.
+
+- [ ] photons (as seen in the special relativity demo)
+- [ ] colours (the general colour palette for lines, etc; this way we can 
+    eventually do nifty things like using themes without too much trouble)
+- [ ] stroke-widths (same idea as above)
+
+There's likely a good way to use css with this, which we should figure out.
