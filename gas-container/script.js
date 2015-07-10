@@ -7,51 +7,72 @@ var height = window.innerHeight;
 
 var ballLayer = new Konva.Layer();              // put balls here
 var backgroundLayer = new Konva.Layer();        // background objects
-var radius= 30;                                     // radius
-var anim;                                        // Konva animation
+var radius= 30;                                 // radius
+var anim;                                       // Konva animation
+var onLeft;                                     // are all balls on left?
 
 // TODO location updater
-function updateBall (frame) {
+function updateBall (layer, frame) {
     var timeDiff = frame.timeDiff;
-    var stage = ball.getStage();
+    var stage = layer.getStage();
+    var balls = layer.getChildren();
     var height = stage.getHeight();
     var width = stage.getWidth();
-    // TODO do this for every ball in the ballLayer
-    var x = ball.getX();
-    var y = ball.getY();
-    var radius= ball.getRadius();
-    
-    // move the ball
-    x += ball.velocity.x;
-    y += ball.velocity.y;
 
-    // collisions with sides
+    onLeft = true;
 
-    // ceiling
-    if (y < radius) {
-        y = radius;
-        ball.velocity.y *= -1;
+    for (var n=0; n < balls.length; n++) {
+        var ball = balls[n];
+        // TODO do this for every ball in the ballLayer
+        var x = ball.getX();
+        var y = ball.getY();
+        var radius= ball.getRadius();
+        
+        // move the ball
+        x += ball.velocity.x;
+        y += ball.velocity.y;
+
+        // collisions with sides
+
+        // ceiling
+        if (y < radius) {
+            y = radius;
+            ball.velocity.y *= -1;
+        }
+
+        // floor
+        if (y > (height - radius)) {
+            y = height - radius;
+            ball.velocity.y *= -1;
+        }
+
+        // left wall
+        if (x < radius) {
+            x = radius;
+            ball.velocity.x *= -1;
+        }
+
+        // right wall
+        if (x > (width - radius)) {
+            x = width - radius;
+            ball.velocity.x *= -1;
+        }
+
+        // see if we're on the left side of the stage; if not, make it false
+        if (x > (width / 2)) {
+            onLeft = false;
+        }
+
+        ball.setPosition({x:x, y:y})
     }
+}
 
-    // floor
-    if (y > (height - radius)) {
-        y = height - radius;
-        ball.velocity.y *= -1;
+function updateRect(frame) {
+    if (onLeft) {
+        left_rectangle.opacity(0.8);
+    } else {
+        left_rectangle.opacity(0);
     }
-
-    // left wall
-    if (x < radius) {
-        x = radius;
-        ball.velocity.x *= -1;
-    }
-
-    // right wall
-    if (x > (width - radius)) {
-        x = width - radius;
-        ball.velocity.x *= -1;
-    }
-
-    ball.setPosition({x:x, y:y})
 }
 
 /*
@@ -75,31 +96,40 @@ var left_rectangle = new Konva.Rect({
 });
 
 
+function createBall() {
+    // ball constructor
+    var ball = new Konva.Circle({
+        x: radius + Math.random() * (width - 2 * radius),
+        y: radius + Math.random() * (height - 2 * radius),
+        radius: radius,
+        fill: 'white',
+        opacity: 0.8
+    });
 
-// ball constructor
-var ball = new Konva.Circle({
-    x: radius + Math.random() * (width - 2 * radius),
-    y: radius + Math.random() * (height - 2 * radius),
-    radius: radius,
-    fill: 'white',
-    opacity: 0.8
-});
+    var vel_angle = Math.random() * 2 * Math.PI;
+    var vel_mag   = 3;
 
-var vel_angle = Math.random() * 2 * Math.PI;
-var vel_mag   = 3;
+    ball.velocity = {
+        x: vel_mag * Math.cos(vel_angle),
+        y: vel_mag * Math.sin(vel_angle)
+    };
 
-ball.velocity = {
-    x: vel_mag * Math.cos(vel_angle),
-    y: vel_mag * Math.sin(vel_angle)
-};
+    ballLayer.add(ball);
+}
 
-ballLayer.add(ball);
+createBall();
+createBall();
+// createBall();
 backgroundLayer.add(left_rectangle);
 stage.add(ballLayer);
 stage.add(backgroundLayer);
 
 anim = new Konva.Animation(function(frame) {
-    updateBall(frame);
+    updateBall(ballLayer, frame);
 }, ballLayer);
+animRect = new Konva.Animation(function(frame) {
+    updateRect(backgroundLayer, frame);
+}, backgroundLayer);
 
 anim.start();
+animRect.start();
