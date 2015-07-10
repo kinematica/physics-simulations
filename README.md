@@ -36,4 +36,9 @@ this will be interesting/intuitive/instructional to someone.
 * `git remote add <name> <url>` Add a new remote repository
 * `rm -rf <git directory>` Delete a git working directory without complaints
 
+## Konva tips
+
+* Look at Performance and Examples section of Konva tutorial
+* Rotation vs rotate
+
 
