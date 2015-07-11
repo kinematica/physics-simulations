@@ -7,9 +7,28 @@ var height = window.innerHeight;
 
 var ballLayer = new Konva.Layer();              // put balls here
 var backgroundLayer = new Konva.Layer();        // background objects
-var radius= 30;                                 // radius
+var buttonLayer = new Konva.Layer();
+var radius= 20;                                 // radius
+var vel_mag = 6;                                // speed of ball
 var anim;                                       // Konva animation
-var onLeft;                                     // are all balls on left?
+var onLeft = false;                             // are all balls on left?
+var oldOnLeft;                                  // track changes
+var rect_color = "#338833";                     // color of the indicator rect
+var ball_color = "#cccccc";                     // color of the balls
+
+/*
+ *  ====METRICS====
+ */
+var percentageOnLeftPredicted;
+var percentageOnLeftActual;
+var timeOnLeft;
+var timeTotal;
+var ballCount;
+
+// VARIABLES FOR REUSE
+
+var x;
+var y;
 
 // TODO location updater
 function updateBall (layer, frame) {
@@ -19,14 +38,14 @@ function updateBall (layer, frame) {
     var height = stage.getHeight();
     var width = stage.getWidth();
 
+    oldOnLeft = onLeft;
     onLeft = true;
 
     for (var n=0; n < balls.length; n++) {
         var ball = balls[n];
         // TODO do this for every ball in the ballLayer
-        var x = ball.getX();
-        var y = ball.getY();
-        var radius= ball.getRadius();
+        x = ball.getX();
+        y = ball.getY();
         
         // move the ball
         x += ball.velocity.x;
@@ -65,13 +84,18 @@ function updateBall (layer, frame) {
 
         ball.setPosition({x:x, y:y})
     }
+
+    // update metrics
+    timeTotal += timeDiff;
+    if (onLeft) { timeOnLeft += timeDiff; }
+    percentageOnLeftActual = 100 * timeOnLeft / timeTotal;
 }
 
 function updateRect(frame) {
     if (onLeft) {
-        left_rectangle.opacity(0.8);
+        left_rectangle.show()
     } else {
-        left_rectangle.opacity(0);
+        left_rectangle.hide()
     }
 }
 
@@ -91,8 +115,8 @@ var left_rectangle = new Konva.Rect({
     y: 0,
     height: height,
     width: width/2,
-    fill: 'green',
-    opacity: 0
+    fill: rect_color,
+    visible: false
 });
 
 
@@ -102,12 +126,10 @@ function createBall() {
         x: radius + Math.random() * (width - 2 * radius),
         y: radius + Math.random() * (height - 2 * radius),
         radius: radius,
-        fill: 'white',
-        opacity: 0.8
+        fill: ball_color
     });
 
     var vel_angle = Math.random() * 2 * Math.PI;
-    var vel_mag   = 3;
 
     ball.velocity = {
         x: vel_mag * Math.cos(vel_angle),
@@ -117,18 +139,35 @@ function createBall() {
     ballLayer.add(ball);
 }
 
-createBall();
-createBall();
-// createBall();
-backgroundLayer.add(left_rectangle);
-stage.add(ballLayer);
-stage.add(backgroundLayer);
+// add ball
+makeLabel('add', 'New Ball', 20, '#ffeb32', '#484848', 0.9, 100, 50, 75, 50, buttonLayer);
+buttonLayer.find('.add').on('mousedown touchstart', function() {
+    createBall();
+    ballCount++;
+    percentageOnLeftPredicted = 100 * Math.pow(0.5, ballCount);
+    percentageOnLeftActual = 0;
+    timeOnLeft = 0;
+    timeTotal = 0;
+});
 
+createBall();
+backgroundLayer.add(left_rectangle);
+stage.add(backgroundLayer);
+stage.add(ballLayer);
+stage.add(buttonLayer);
+
+// update positions of the balls
 anim = new Konva.Animation(function(frame) {
     updateBall(ballLayer, frame);
 }, ballLayer);
+
+// update rectangle showing whether all particles are on the left
 animRect = new Konva.Animation(function(frame) {
-    updateRect(backgroundLayer, frame);
+    if (onLeft === oldOnLeft) {
+        return false;
+    } else {
+        updateRect(backgroundLayer, frame);
+    }
 }, backgroundLayer);
 
 anim.start();
