@@ -6,31 +6,46 @@ var height = window.innerHeight;
  */
 
 var ballLayer = new Konva.Layer();              // put balls here
+var textLayer = new Konva.Layer();              // write metrics here
 var backgroundLayer = new Konva.Layer();        // background objects
 var buttonLayer = new Konva.Layer();
 var radius= 20;                                 // radius
-var vel_mag = 6;                                // speed of ball
+var vel_mag = 1;                                // speed of ball
 var anim;                                       // Konva animation
 var onLeft = false;                             // are all balls on left?
 var oldOnLeft;                                  // track changes
 var rect_color = "#338833";                     // color of the indicator rect
+var text_color = "#cccccc";                     // color of the text
 var ball_color = "#cccccc";                     // color of the balls
 
 /*
  *  ====METRICS====
  */
+
 var percentageOnLeftPredicted;
 var percentageOnLeftActual;
 var timeOnLeft;
 var timeTotal;
 var ballCount;
 
-// VARIABLES FOR REUSE
+/*
+ *  ====VARIABLES FOR REUSE====
+ */
 
 var x;
 var y;
 
-// TODO location updater
+// Keep track of metrics
+var metricsText = new Konva.Text({
+    x: 25,
+    y: 100,
+    text: 'Time Spent on Left\nPredicted: ' + percentageOnLeftPredicted + '\nActual: ' + percentageOnLeftActual,
+    fontsize: 48,
+    fill: text_color,
+    align: 'left'
+});
+
+// Update ball position
 function updateBall (layer, frame) {
     var timeDiff = frame.timeDiff;
     var stage = layer.getStage();
@@ -43,13 +58,12 @@ function updateBall (layer, frame) {
 
     for (var n=0; n < balls.length; n++) {
         var ball = balls[n];
-        // TODO do this for every ball in the ballLayer
         x = ball.getX();
         y = ball.getY();
         
         // move the ball
-        x += ball.velocity.x;
-        y += ball.velocity.y;
+        x += vel_mag * ball.velocity.x * timeDiff;
+        y += vel_mag * ball.velocity.y * timeDiff;
 
         // collisions with sides
 
@@ -132,8 +146,8 @@ function createBall() {
     var vel_angle = Math.random() * 2 * Math.PI;
 
     ball.velocity = {
-        x: vel_mag * Math.cos(vel_angle),
-        y: vel_mag * Math.sin(vel_angle)
+        x: Math.cos(vel_angle),
+        y: Math.sin(vel_angle)
     };
 
     ballLayer.add(ball);
@@ -152,9 +166,11 @@ buttonLayer.find('.add').on('mousedown touchstart', function() {
 
 createBall();
 backgroundLayer.add(left_rectangle);
+textLayer.add(metricsText);
 stage.add(backgroundLayer);
 stage.add(ballLayer);
 stage.add(buttonLayer);
+stage.add(textLayer);
 
 // update positions of the balls
 anim = new Konva.Animation(function(frame) {
