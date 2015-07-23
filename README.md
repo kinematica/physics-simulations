@@ -34,6 +34,7 @@ this will be interesting/intuitive/instructional to someone.
 * `git stash` Hide your changes for a moment, resets the working directory
 * `git stash pop` Get your changes back
 * `git remote add <name> <url>` Add a new remote repository
+* `git checkout <branch>` Switch to a different branch
 * `rm -rf <git directory>` Delete a git working directory without complaints
 
 ## Konva tips
