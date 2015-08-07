@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>CMB</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <style>
+            body {  margin: 0;
+                    font-family: Monospace;
+                    font-weight: lighter;
+                    /*background-color: #ccccff;*/
+                    margin: 0px;
+                    overflow: hidden;}
+            canvas { width: 100%; height: 100%;}
+            container { margin: 0; overflow: hidden; width: 100%; height: 100% }
+            .title {color: #e2e2e2; text-decoration: none; font-family: 'Roboto', sans-serif; font-weight: 300; font-size: 200%;}
+            .katex-math {color: #9a9a9a; font-size: 200%; font-family: 'Roboto';}
+            .title  {
+                /*margin: 0;*/
+                /*background-color: #ccccff;*/
+                /*width: 300px;*/
+                /*height: 50px;*/
+            }
+        </style>
+        <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100' rel='stylesheet' type='text/css'>
+    </head>
+    <body>
+        <!-- <p class="numParticles"></p> -->
+<!--         <div id="universeSlider" class="title"  style="position: absolute; top: 100px; left: 150px;">
+            Slider
+        </div> -->
+        <div id="title" class="title" style="z-index: 2; position: absolute; top: 15px; left: 150px; width: 850px">
+            <!-- <i class="fa fa-globe fa-inverse fa-3x"></i> -->
+            <p>Cosmic Microwave Background</p>
+
+            <p style="font-size: 20px; font-weight: lighter; color: #c3c3c3; width: 400px">This visualization shows the CMB radiation as detected by the Planck Spacecraft near Earth when the Universe was just 380,000 years old.</p>
+        </div>
+        <div id="container" class="container"></div>
+        <script src="../bower_components/three.js/three.min.js"></script>
+        <script src="../bower_components/three.js-util/TrackballControls.js"></script>
+        <!-- // <script src="../js/OrbitControls.js"></script> -->
+        <script src="../bower_components/three.js-util/Detector.js"></script>
+        <!-- // <script src="../bower_components/util//stats.min.js"></script> -->
+        <!-- // <script src="../bower_components/util//dat.gui.min.js"></script> -->
+
+        // <!-- ---------------- Custom Shader Code ------------------------ -->
+        <script id="vertexShader" type="x-shader/x-vertex">
+        uniform float mixAmount;
+        varying vec2 vUv;
+
+        void main()
+        {
+            vUv = uv;
+            vec3 goalPosition = 200.0 * vec3( 0, uv.y, -uv.x ) + vec3(0.0, -100.0, 100.0);
+            vec3 newPosition = mix( position, goalPosition, mixAmount );
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
+        }
+        </script>
+
+        <!-- fragment shader a.k.a. pixel shader -->
+        <script id="fragmentShader" type="x-shader/x-vertex">
+        uniform sampler2D baseTexture;
+        varying vec2 vUv;
+
+        void main()
+        {
+            gl_FragColor = texture2D( baseTexture, vUv );
+        }
+        </script>
+        <script>
+
+            // standard global variables
+            if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+            var container, scene, stats, controls, camera;
+            var renderer, stats2;
+            var parameters;
+            var mesh;
+            var gui;
+            var sphere, cube;
+            var material;
+
+            // Used in initParticles()
+            var emitter, particleGroup;
+
+            var clock = new THREE.Clock();
+
+            // RENDERER
+            var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
+
+            container = document.getElementById( 'container' );
+
+            function init() {
+
+                // KaTeX
+                var mathDiv = document.getElementById('katex-math');
+                // katex.render("H^2 = \\frac{8\\pi G}{3}\[\\frac{1}{2} \\dot{\\phi}^2 + V\]", mathDiv);
+
+                // SCENE
+                scene = new THREE.Scene();
+                scene.fog = new THREE.Fog( 0x050505, 2000, 3500 );
+                // scene.fog = new THREE.FogExp2( 0x9999ff, 0.00025 );
+
+                // CAMERA
+                var VIEW_ANGLE = 75, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 10000;
+                camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
+                // camera = new THREE.PerspectiveCamera( 27, window.innerWidth / window.innerHeight, 5, 3500 );
+                // camera.position.set(0,150,400);
+                camera.position.z = -120;
+                camera.position.x = 120;
+                camera.position.y = 120;
+                camera.lookAt(scene.position);
+
+                var light = new THREE.PointLight(0xffffff);
+                light.position.set(0,0, 400);
+                // scene.add(light);
+                // FLOOR
+                var floorTexture = new THREE.ImageUtils.loadTexture( 'img/checkerboard.jpg' );
+                floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping;
+                floorTexture.repeat.set( 10, 10 );
+                var floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture, side: THREE.DoubleSide, transparent: true, opacity: 0.05} );
+                // -GUIDE- PlaneGeometry(width, height, widthSegments, heightSegments)
+                var floorGeometry = new THREE.PlaneGeometry(120, 120, 10, 10);
+                var floor = new THREE.Mesh(floorGeometry, floorMaterial);
+                floor.position.y = 0.5;
+                floor.rotation.x = Math.PI / 2;
+                // scene.add(floor);
+
+                var axes = new THREE.AxisHelper();
+                scene.add(axes);
+
+                //
+
+                renderer = new THREE.WebGLRenderer( { antialias: false } );
+                renderer.setClearColor( scene.fog.color );
+                renderer.setPixelRatio( window.devicePixelRatio );
+                renderer.setSize( window.innerWidth, window.innerHeight );
+
+                container.appendChild( renderer.domElement );
+
+                //
+
+                // stats = new Stats();
+                // stats.domElement.style.position = 'absolute';
+                // stats.domElement.style.top = '0px';
+                // container.appendChild( stats.domElement );
+
+                //
+
+                window.addEventListener( 'resize', onWindowResize, false );
+
+                // controls = new THREE.OrbitControls( camera, renderer.domElement );
+                controls = new THREE.TrackballControls( camera, renderer.domElement );
+                controls.minDistance = 5;
+                controls.maxDistance = 5000;
+
+                ////////////
+                // CUSTOM //
+                ////////////
+                var SphereR = 60;
+
+                var sphereGeom =  new THREE.SphereGeometry( 50, 32, 16 );
+                var earthTexture = THREE.ImageUtils.loadTexture( 'img/earth_night.png' );
+                var earthMaterial = new THREE.MeshBasicMaterial( { map: earthTexture } );
+                var earth = new THREE.Mesh( sphereGeom.clone(), earthMaterial );
+                earth.position.set(0, 0, 0);
+                scene.add( earth );
+
+
+
+                var ballGeometry = new THREE.SphereGeometry( 60, 32, 16 );
+
+                // var ballTexture = new THREE.ImageUtils.loadTexture('img/cmb2.png');
+                var ballTexture = new THREE.ImageUtils.loadTexture('img/Planck_CMB_1MB.jpg');
+
+                // use "this." to create global object
+                this.customUniforms =
+                {
+                    baseTexture: { type: "t", value: ballTexture },
+                    mixAmount:   { type: "f", value: 0.0 }
+                };
+
+                // create custom material from the shader code above
+                //   that is within specially labeled script tags
+                var customMaterial = new THREE.ShaderMaterial(
+                {
+                    uniforms: customUniforms,
+                    vertexShader:   document.getElementById( 'vertexShader'   ).textContent,
+                    fragmentShader: document.getElementById( 'fragmentShader' ).textContent,
+                    side: THREE.DoubleSide
+                }   );
+
+                var ball = new THREE.Mesh( ballGeometry, customMaterial );
+                ball.position.set(0, 0, 0);
+                ball.rotation.set(0, -Math.PI / 2, 0);
+                scene.add( ball );
+
+                // SUPER SIMPLE GLOW EFFECT
+                // use sprite because it appears the same from all angles
+                var spriteMaterial = new THREE.SpriteMaterial(
+                {
+                    map: new THREE.ImageUtils.loadTexture( 'img/glow.png' ),
+                    useScreenCoordinates: false,
+                    color: 0x9acdf2, transparent: false, blending: THREE.AdditiveBlending
+                });
+                var sprite = new THREE.Sprite( spriteMaterial );
+                sprite.scale.set(60 * 2.8, 60 * 2.8, 1.0);
+                ball.add(sprite); // this centers the glow at the mesh
+
+                //
+
+
+            }
+
+        function onWindowResize() {
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize( window.innerWidth, window.innerHeight );
+
+        }
+
+
+        function animate() {
+            requestAnimationFrame( animate );
+            var time = Date.now()*0.001;
+            render();
+            update();
+        }
+
+        function update()
+        {
+            // if ( keyboard.pressed("z") )
+            // {
+            //     // do something
+            // }
+
+            var t = clock.getElapsedTime();
+            if (t < Math.PI)
+            customUniforms.mixAmount.value = 0.5 * (1 + Math.cos(t));
+
+            // controls.update();
+            // stats.update();
+            updateCamera();
+        }
+
+        function updateCamera() {
+            var now = Date.now() * 0.0003;
+            var t = clock.getElapsedTime();
+            // camera.position.x = Math.sin( now ) * 50;
+            // camera.position.z = Math.cos( now ) * 100;
+            // if (t < 20) {
+            //     camera.lookAt( scene.position );
+            //     camera.position.x = (10-t*1);
+            //     camera.position.z = (200-t*10);
+            //     // camera.rotation.x = Math.PI/10 * t;
+            //     // camera.rotation.y = Math.PI/10 * t;
+            //     // camera.rotation.z = -Math.PI/10 * t;
+            //     if (camera.position.x < 0) camera.position.x = 0;
+            //     if (camera.position.z < 0) camera.position.z = 0;
+            //     // console.log(t);
+            // }
+            // else {
+                controls.update();
+            // }
+            // camera.lookAt( scene.position );
+        }
+
+        function render( dt ) {
+            // updateCamera();
+            renderer.render( scene, camera );
+        }
+
+        init();
+        setTimeout(animate, 0);
+
+        </script>
+
+    </body>
+</html>
