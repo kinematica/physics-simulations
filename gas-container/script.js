@@ -1,6 +1,16 @@
 var width = window.innerWidth;
 var height = window.innerHeight;
 
+/* 
+ *  ====FUNCTIONS====
+ */
+
+var entropy = function(grid) {
+    var gridSize = grid.length;
+    var ballCount = 0;
+    var i = gridSize;
+    while (i--) { ballCount += grid[i]; }
+}
 
 /* 
  *  ====TEST GUI====
@@ -34,18 +44,22 @@ var Params = function() {
  *  ====CONSTANTS====
  */
 
+var maxBalls = 50;
 var ballLayer = new Konva.Layer();              // put balls here
 var textLayer = new Konva.Layer();              // write metrics here
 var backgroundLayer = new Konva.Layer();        // background objects
 var buttonLayer = new Konva.Layer();
 var radius= 20;                                 // radius
 var anim;                                       // Konva animation
-var onRight = false;                            // are all balls on right?
-var oldOnRight;                                 // track changes
-var onLeft = false;                             // are all balls on left?
-var oldOnLeft;                                  // track changes
-var left_rect_color = "#338833";                     // color of the indicator rect
-var right_rect_color = "#0099FF";                     // color of the indicator rect
+var numOnLeft = 0;
+var numOnRight = 0;
+
+/* 
+ *  ====COLORS====
+ */
+
+var left_rect_color = "#0099FF"; // "#338833";                // color of the indicator rect
+var right_rect_color = "#0099FF";               // color of the indicator rect
 var text_color = "#cccccc";                     // color of the text
 var ball_color = "#cccccc";                     // color of the balls
 
@@ -55,6 +69,8 @@ var ball_color = "#cccccc";                     // color of the balls
 
 var percentageOnLeftPredicted;
 var percentageOnLeftActual;
+var maxEntropy;
+var entropy;
 var timeOnLeft;
 var timeTotal;
 var ballCount;
@@ -76,6 +92,10 @@ var metricsText = new Konva.Text({
     align: 'left'
 });
 
+/*
+ *  ====ANIMATIONS====
+ */
+
 
 // Update ball position
 function updateBall (layer, frame) {
@@ -85,12 +105,12 @@ function updateBall (layer, frame) {
     var height = stage.getHeight();
     var width = stage.getWidth();
 
-    oldOnRight = onRight;
-    onRight = true;
-    oldOnLeft = onLeft;
-    onLeft = true;
+    numOnLeft = 0;
+    numOnRight = 0;
 
-    for (var n=0; n < balls.length; n++) {
+    ballCount = balls.length;
+
+    for (var n=0; n < ballCount; n++) {
         var ball = balls[n];
         x = ball.getX();
         y = ball.getY();
@@ -127,17 +147,19 @@ function updateBall (layer, frame) {
 
 	if (text.maxwellsDemon) {
 		// maxwell's demon
-		if (x > (width / 2) && x - text.speed * ball.velocity.x * timeDiff < (width / 2)) {
+		if (x > (width / 2 - radius) && x - text.speed * ball.velocity.x * timeDiff < (width / 2 - radius)) {
 			x = width/2 - radius;
 			ball.velocity.x *= -1;
+//			maxwellsDaemonImg.setPosition({x: width / 2, y: y});
+//			maxwellsDaemonImg.show();
 		}
 	}
 
         // see if we're on the left side of the stage; if not, make it false
         if (x > (width / 2)) {
-            onLeft = false;
+            numOnRight++;
         } else {
-            onRight = false;
+            numOnLeft++;
         }
 
         ball.setPosition({x:x, y:y})
@@ -145,22 +167,26 @@ function updateBall (layer, frame) {
 
     // update metrics
     timeTotal += timeDiff;
-    if (onLeft) { timeOnLeft += timeDiff; }
+    if (numOnLeft == ballCount) { timeOnLeft += timeDiff; }
     percentageOnLeftActual = 100 * timeOnLeft / timeTotal;
+    maxEntropy = Kinematica.log_binomial(ballCount,Math.floor(ballCount/2));
+    entropy = Kinematica.log_binomial(ballCount,numOnLeft); // defined macrostate as numOnLeft
+
+    // update display text
+    $('#ballCount').text(ballCount);
+    $('#maxEntropy').text(maxEntropy);
+    $('#entropy').text(entropy);
+    /* $('#percentageOnLeftActual').text(percentageOnLeftActual); */
+    /* $('#display').text(
+        "Maximum possible entropy with " + ballCount + " balls: " + maxEntropy + "\n" +
+        "Current entropy: " + entropy + "\n" +
+        "Percentage of Time all balls are on Left (Actual): " + percentageOnLeftActual
+    ); */
 }
 
 function updateRect(frame) {
-    if (onRight) {
-        right_rectangle.show()
-    } else {
-        right_rectangle.hide()
-    }
-
-    if (onLeft) {
-        left_rectangle.show()
-    } else {
-        left_rectangle.hide()
-    }
+    right_rectangle.opacity(0.5 * numOnRight / ballCount);
+    left_rectangle.opacity(0.5 * numOnLeft / ballCount);
 }
 
 /*
@@ -180,7 +206,7 @@ var right_rectangle = new Konva.Rect({
     height: height,
     width: width/2,
     fill: right_rect_color,
-    visible: false
+    // visible: false
 });
 var left_rectangle = new Konva.Rect({
     x: 0,
@@ -188,7 +214,7 @@ var left_rectangle = new Konva.Rect({
     height: height,
     width: width/2,
     fill: left_rect_color,
-    visible: false
+    // visible: false
 });
 
 function createBall() {
@@ -197,6 +223,10 @@ function createBall() {
 }
 
 function createBallAt(x, y) {
+    if (ballCount >= maxBalls) {
+        return 0;
+    }
+
     // ball constructor
     if (x >= 0 && x <= 1 && y >= 0 && y <= 1) {
         var ball = new Konva.Circle({
@@ -246,7 +276,7 @@ function startInSamePlace () {
 }
 
 // add ball
-makeLabel('add', 'New Ball', 20, '#ffeb32', '#484848', 0.9, 100, 50, 75, 50, buttonLayer);
+// makeLabel('add', 'New Ball', 20, '#ffeb32', '#484848', 0.9, 100, 50, 75, 50, buttonLayer);
 buttonLayer.find('.add').on('mousedown touchstart', function() {
     createBall();
     ballCount++;
@@ -259,11 +289,29 @@ buttonLayer.find('.add').on('mousedown touchstart', function() {
 createBall();
 backgroundLayer.add(left_rectangle);
 backgroundLayer.add(right_rectangle);
-textLayer.add(metricsText);
+// textLayer.add(metricsText);
 stage.add(backgroundLayer);
 stage.add(ballLayer);
 stage.add(buttonLayer);
 stage.add(textLayer);
+
+/* 
+ *  ====BRIAN====
+ */
+
+// var maxwellsDaemonImg;
+// var imageObj = new Image();
+// imageObj.onload = function() {
+//     var maxwellsDaemonImg = new Konva.Image({
+//         x: 0,
+//         y: 0,
+//         image: imageObj,
+//         hidden: true
+//     });
+//     backgroundLayer.add(maxwellsDaemonImg);
+// }
+// imageObj.src = 'maxwells-daemon.png';
+
 
 // update positions of the balls
 anim = new Konva.Animation(function(frame) {
@@ -272,12 +320,15 @@ anim = new Konva.Animation(function(frame) {
 
 // update rectangle showing whether all particles are on the left
 animRect = new Konva.Animation(function(frame) {
-    if (onLeft === oldOnLeft && onRight === oldOnRight) {
-        return false;
-    } else {
         updateRect(backgroundLayer, frame);
-    }
 }, backgroundLayer);
+
+stage.on('click', function() {
+    mousePos = this.getPointerPosition();
+    var x = mousePos.x / width;
+    var y = mousePos.y / height;
+    createBallAt(x,y);
+});
 
 anim.start();
 animRect.start();
