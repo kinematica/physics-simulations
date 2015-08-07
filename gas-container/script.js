@@ -69,6 +69,8 @@ var ball_color = "#cccccc";                     // color of the balls
 
 var percentageOnLeftPredicted;
 var percentageOnLeftActual;
+var maxEntropy;
+var entropy;
 var timeOnLeft;
 var timeTotal;
 var ballCount;
@@ -145,7 +147,7 @@ function updateBall (layer, frame) {
 
 	if (text.maxwellsDemon) {
 		// maxwell's demon
-		if (x > (width / 2) && x - text.speed * ball.velocity.x * timeDiff < (width / 2)) {
+		if (x > (width / 2 - radius) && x - text.speed * ball.velocity.x * timeDiff < (width / 2 - radius)) {
 			x = width/2 - radius;
 			ball.velocity.x *= -1;
 //			maxwellsDaemonImg.setPosition({x: width / 2, y: y});
@@ -167,6 +169,19 @@ function updateBall (layer, frame) {
     timeTotal += timeDiff;
     if (numOnLeft == ballCount) { timeOnLeft += timeDiff; }
     percentageOnLeftActual = 100 * timeOnLeft / timeTotal;
+    maxEntropy = Kinematica.log_binomial(ballCount,Math.floor(ballCount/2));
+    entropy = Kinematica.log_binomial(ballCount,numOnLeft); // defined macrostate as numOnLeft
+
+    // update display text
+    $('#ballCount').text(ballCount);
+    $('#maxEntropy').text(maxEntropy);
+    $('#entropy').text(entropy);
+    /* $('#percentageOnLeftActual').text(percentageOnLeftActual); */
+    /* $('#display').text(
+        "Maximum possible entropy with " + ballCount + " balls: " + maxEntropy + "\n" +
+        "Current entropy: " + entropy + "\n" +
+        "Percentage of Time all balls are on Left (Actual): " + percentageOnLeftActual
+    ); */
 }
 
 function updateRect(frame) {
