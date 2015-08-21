@@ -1,22 +1,21 @@
-var width = window.innerWidth;
-var height = window.innerHeight;
+//IMAGE SOURCES
+var sources = {
+  // bg: "img/fill.png",
+  // brian: "img/fill.png",
+  // bg: "img/fill.png",
+  // bg: "img/fill.png",
+};
 
-/* 
- *  ====FUNCTIONS====
- */
+//DEFINE A GRAPH GLOBAL VARIABLE
+var myGraph;
+var graphPoints = [];
+var graphFrameInterval = 20; //ms
+var graphSinceRefresh  = 0; //ms
 
-var entropy = function(grid) {
-    var gridSize = grid.length;
-    var ballCount = 0;
-    var i = gridSize;
-    while (i--) { ballCount += grid[i]; }
-}
-
-/* 
- *  ====TEST GUI====
- */
-
-var text;
+var right_rectangle,
+    right_rectangle,
+    left_rectangle,
+    text;
 
 var Params = function() {
   this.message = 'dat.gui';
@@ -40,21 +39,17 @@ var Params = function() {
   gui.add(text, 'startInSamePlace');
 // };
 
-/* 
+/*
  *  ====CONSTANTS====
  */
 
 var maxBalls = 50;
-var ballLayer = new Konva.Layer();              // put balls here
-var textLayer = new Konva.Layer();              // write metrics here
-var backgroundLayer = new Konva.Layer();        // background objects
-var buttonLayer = new Konva.Layer();
 var radius= 20;                                 // radius
 var anim;                                       // Konva animation
 var numOnLeft = 0;
 var numOnRight = 0;
 
-/* 
+/*
  *  ====COLORS====
  */
 
@@ -82,20 +77,153 @@ var ballCount;
 var x;
 var y;
 
-// Keep track of metrics
-var metricsText = new Konva.Text({
-    x: 25,
-    y: 100,
-    text: 'Time Spent on Left\nPredicted: ' + percentageOnLeftPredicted + '\nActual: ' + percentageOnLeftActual,
-    fontsize: 48,
-    fill: text_color,
-    align: 'left'
-});
-
 /*
- *  ====ANIMATIONS====
+ *      ====KONVA STUFF====
  */
 
+var stage = new Konva.Stage({
+    container: 'container',
+    width: width,
+    height: height
+});
+
+var ballLayer = new Konva.Layer();              // put balls here
+var textLayer = new Konva.Layer();              // write metrics here
+var graphStaticLayer = new Konva.Layer();       // graph static background goes here
+var graphLayer = new Konva.Layer();             // graph goes here
+var backgroundLayer = new Konva.Layer();        // background objects
+var buttonLayer = new Konva.Layer();
+
+//==============================================================================
+//                                BUILD THE SCENE
+//==============================================================================
+
+
+//WHAT TO DO WITH THE LOADED IMAGES
+function draw(images) {
+}
+
+function init() {
+    //LOAD ALL THE IMAGES AND CALL THE SCENE DRAWING FUNCTIONS WITH IT
+    loadImages(sources, function(images) {
+      draw(images);
+    });
+
+    buildScene();
+
+    buildGUI();
+
+    createBall();
+
+    //EVERYTHING'S LOADED - CAN START ANIMATION
+    anim.start();
+    animRect.start();
+}
+
+function buildScene() {
+
+    // Keep track of metrics
+    metricsText = new Konva.Text({
+        x: 25,
+        y: 100,
+        text: 'Time Spent on Left\nPredicted: ' + percentageOnLeftPredicted + '\nActual: ' + percentageOnLeftActual,
+        fontsize: 48,
+        fill: text_color,
+        align: 'left'
+    });
+
+    // rectangle constructors
+    right_rectangle = new Konva.Rect({
+        x: width/2,
+        y: 0,
+        height: height,
+        width: width/2,
+        fill: right_rect_color,
+        // visible: false
+    });
+    left_rectangle = new Konva.Rect({
+        x: 0,
+        y: 0,
+        height: height,
+        width: width/2,
+        fill: left_rect_color,
+        // visible: false
+    });
+
+    backgroundLayer.add(left_rectangle);
+    backgroundLayer.add(right_rectangle);
+    // textLayer.add(metricsText);
+    stage.add(backgroundLayer);
+    stage.add(ballLayer);
+    stage.add(buttonLayer);
+    stage.add(textLayer);
+    stage.add(graphStaticLayer);
+    stage.add(graphLayer);
+
+    stage.on('click', function() {
+        mousePos = this.getPointerPosition();
+        var x = mousePos.x / width;
+        var y = mousePos.y / height;
+        createBallAt(x,y);
+    });
+
+};
+
+
+function buildGUI() {
+
+    // add ball
+    // makeLabel('add', 'New Ball', 20, '#ffeb32', '#484848', 0.9, 100, 50, 75, 50, buttonLayer);
+    // buttonLayer.find('.add').on('mousedown touchstart', function() {
+    //     createBall();
+    //     ballCount++;
+    //     percentageOnLeftPredicted = 100 * Math.pow(0.5, ballCount);
+    //     percentageOnLeftActual = 0;
+    //     timeOnLeft = 0;
+    //     timeTotal = 0;
+    // });
+
+    // CREATE AN ENTROPY GRAPH
+    myGraph = new Kinematica.Graph({
+        id: "entropyGraph",
+        title: "Live Entropy Graph",
+        // titleColour: "#ffffff",
+        // colour: "#ffffff",
+        bg: '#a1e4ff',
+        x: 30,
+        y: 80,
+        w: 450,
+        h: 150,
+        points: 200,
+        xmin: 0,
+        xmax: 100,
+        ymin: 0,
+        ymax: 10,
+        lineSep: 40, //separation (in px) between helper graph lines
+        // xTicks: [2, 4, 6, 8],
+        // yTicks: [2, 4, 6, 8]
+    });
+    myGraph.getTicks();
+    myGraph.addFunction();
+
+    graphStaticLayer.add(myGraph.BGnode);
+    graphLayer.add(myGraph.node[0]);
+
+    graphStaticLayer.batchDraw();
+    graphLayer.batchDraw();
+    // ballLayer.add(myGraph.node[1]);
+}
+
+//==============================================================================
+//                                FUNCTIONS
+//==============================================================================
+
+var entropy = function(grid) {
+    var gridSize = grid.length;
+    var ballCount = 0;
+    var i = gridSize;
+    while (i--) { ballCount += grid[i]; }
+}
 
 // Update ball position
 function updateBall (layer, frame) {
@@ -114,7 +242,9 @@ function updateBall (layer, frame) {
         var ball = balls[n];
         x = ball.getX();
         y = ball.getY();
-        
+
+        // console.log('ballx : ' + x);
+
         // move the ball
         x += text.speed * ball.velocity.x * timeDiff;
         y += text.speed * ball.velocity.y * timeDiff;
@@ -145,15 +275,15 @@ function updateBall (layer, frame) {
             ball.velocity.x *= -1;
         }
 
-	if (text.maxwellsDemon) {
-		// maxwell's demon
-		if (x > (width / 2 - radius) && x - text.speed * ball.velocity.x * timeDiff < (width / 2 - radius)) {
-			x = width/2 - radius;
-			ball.velocity.x *= -1;
-//			maxwellsDaemonImg.setPosition({x: width / 2, y: y});
-//			maxwellsDaemonImg.show();
-		}
-	}
+    if (text.maxwellsDemon) {
+        // maxwell's demon
+        if (x > (width / 2 - radius) && x - text.speed * ball.velocity.x * timeDiff < (width / 2 - radius)) {
+            x = width/2 - radius;
+            ball.velocity.x *= -1;
+//          maxwellsDaemonImg.setPosition({x: width / 2, y: y});
+//          maxwellsDaemonImg.show();
+        }
+    }
 
         // see if we're on the left side of the stage; if not, make it false
         if (x > (width / 2)) {
@@ -174,8 +304,8 @@ function updateBall (layer, frame) {
 
     // update display text
     $('#ballCount').text(ballCount);
-    $('#maxEntropy').text(maxEntropy);
-    $('#entropy').text(entropy);
+    $('#maxEntropy').text(Math.round(maxEntropy*100)/100);
+    $('#entropy').text(Math.round(entropy*100)/100);
     /* $('#percentageOnLeftActual').text(percentageOnLeftActual); */
     /* $('#display').text(
         "Maximum possible entropy with " + ballCount + " balls: " + maxEntropy + "\n" +
@@ -184,38 +314,11 @@ function updateBall (layer, frame) {
     ); */
 }
 
-function updateRect(frame) {
+function updateRect (layer, frame) {
     right_rectangle.opacity(0.5 * numOnRight / ballCount);
     left_rectangle.opacity(0.5 * numOnLeft / ballCount);
 }
 
-/*
- *      ====KONVA STUFF====
- */
-
-var stage = new Konva.Stage({
-    container: 'container',
-    width: width,
-    height: height
-});
-
-// rectangle constructors
-var right_rectangle = new Konva.Rect({
-    x: width/2,
-    y: 0,
-    height: height,
-    width: width/2,
-    fill: right_rect_color,
-    // visible: false
-});
-var left_rectangle = new Konva.Rect({
-    x: 0,
-    y: 0,
-    height: height,
-    width: width/2,
-    fill: left_rect_color,
-    // visible: false
-});
 
 function createBall() {
     // create ball at random position
@@ -233,15 +336,21 @@ function createBallAt(x, y) {
             x: radius + x * (width - 2 * radius),
             y: radius + y * (height - 2 * radius),
             radius: radius,
-            fill: ball_color
+            fill: ball_color,
+            // velocity: {
+            // x: Math.cos(vel_angle),
+            // y: Math.sin(vel_angle)
+            // }
         });
-    
-        var vel_angle = Math.random() * 2 * Math.PI;
 
+        var vel_angle = Math.random() * 2 * Math.PI;
+        // ball.prototype.velocty = [];
         ball.velocity = {
             x: Math.cos(vel_angle),
             y: Math.sin(vel_angle)
         };
+        // console.log('ballx: ' + ball.velocity.x);
+        // console.log('ballx: ' + ball.x());
 
         ballLayer.add(ball);
     } else {
@@ -275,27 +384,7 @@ function startInSamePlace () {
     }
 }
 
-// add ball
-// makeLabel('add', 'New Ball', 20, '#ffeb32', '#484848', 0.9, 100, 50, 75, 50, buttonLayer);
-buttonLayer.find('.add').on('mousedown touchstart', function() {
-    createBall();
-    ballCount++;
-    percentageOnLeftPredicted = 100 * Math.pow(0.5, ballCount);
-    percentageOnLeftActual = 0;
-    timeOnLeft = 0;
-    timeTotal = 0;
-});
-
-createBall();
-backgroundLayer.add(left_rectangle);
-backgroundLayer.add(right_rectangle);
-// textLayer.add(metricsText);
-stage.add(backgroundLayer);
-stage.add(ballLayer);
-stage.add(buttonLayer);
-stage.add(textLayer);
-
-/* 
+/*
  *  ====BRIAN====
  */
 
@@ -313,22 +402,48 @@ stage.add(textLayer);
 // imageObj.src = 'maxwells-daemon.png';
 
 
+//==============================================================================
+//                                ANIMATIONS
+//==============================================================================
 // update positions of the balls
 anim = new Konva.Animation(function(frame) {
+
     updateBall(ballLayer, frame);
+
+    if ((frame.time - graphSinceRefresh) >= graphFrameInterval) {
+
+        // console.log('11');
+        graphSinceRefresh = frame.time;
+
+        graphPoints.push({x: myGraph.points+1, y: entropy});
+
+        if (graphPoints.length > myGraph.points) graphPoints.shift();
+
+        graphPoints.forEach(function(element, index, array) {element.x--});
+
+        myGraph.mapToGraph(graphPoints, 0);
+
+        graphLayer.batchDraw();
+    }
+    // myGraph.mapToGraph(points2, 1);
+
+    updateRect(backgroundLayer, frame);
+
+
 }, ballLayer);
 
 // update rectangle showing whether all particles are on the left
 animRect = new Konva.Animation(function(frame) {
-        updateRect(backgroundLayer, frame);
+
+    updateRect(backgroundLayer, frame);
+
 }, backgroundLayer);
 
-stage.on('click', function() {
-    mousePos = this.getPointerPosition();
-    var x = mousePos.x / width;
-    var y = mousePos.y / height;
-    createBallAt(x,y);
+//==============================================================================
+//                                INITIATE
+//==============================================================================
+$( document ).ready(function() {
+    console.log('Kinematica v' + Kinematica.version);
+    // console.log('Kinematica LogBinomial: ' + Kinematica.log_binomial(2,1));
+    init();
 });
-
-anim.start();
-animRect.start();

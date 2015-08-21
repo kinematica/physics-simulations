@@ -17,6 +17,25 @@ function getRandomColor() {
     return colors[Math.round(Math.random() * (colors.length-1))];
 }
 
+//IMAGE LOADER (DO THIS FIRST BEFORE PROCESSING SCENE)
+function loadImages(sources, callback) {
+  var images = {};
+  var loadedImages = 0;
+  var numImages = 0;
+  // get num of sources
+  for(var src in sources) {
+    numImages++;
+  }
+  for(var src in sources) {
+    images[src] = new Image();
+    images[src].onload = function() {
+      if(++loadedImages >= numImages) {
+        callback(images);
+      }
+    };
+    images[src].src = sources[src];
+  }
+}
 
 function makeSlider(variable, callback, minValue, maxValue, units, SliderX, SliderY, length, slidertext, sliderID, colour, output) {
                 // var Slider = new Konva.Rect({
