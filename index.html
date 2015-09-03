@@ -1,41 +1,9 @@
-<<<<<<< HEAD
-<!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="UTF-8">
-    <title>Columbia Physics Simulations by stefco</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
-  </head>
-  <body>
-    <section class="page-header">
-      <h1 class="project-name">Columbia Physics Simulations</h1>
-      <h2 class="project-tagline">Simple web apps for demonstrating neat physics phenomena.</h2>
-      <a href="https://github.com/stefco/physics-simulations" class="btn">View on GitHub</a>
-      <a href="https://github.com/stefco/physics-simulations/zipball/master" class="btn">Download .zip</a>
-      <a href="https://github.com/stefco/physics-simulations/tarball/master" class="btn">Download .tar.gz</a>
-    </section>
-
-    <section class="main-content">
-      <h3>
-<a id="columbia-physics-simulations" class="anchor" href="#columbia-physics-simulations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Columbia Physics Simulations.</h3>
-
-<p>This site holds demos of physical phenomena made by graduate and undergraduate students in Columbia's Physics Department. Our goal is to find simple ways to illustrate nonintuitive phenomena through interactive visual aids. Some of these demonstrations will end up on World Science U.</p>
-
-<h2>
-<a id="simulations" class="anchor" href="#simulations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Simulations</h2>
-
-<p><a href="sr"><strong>Special Relativity:</strong> Lamp in a Train</a></p>
-=======
 <!doctype html>
 <html>
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Kinematica by stefco</title>
+    <title>Kinematica by kinematica</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/github-light.css">
@@ -50,18 +18,32 @@
         <h1>Kinematica</h1>
         <p>Intuitive physics demonstrations, and tools for making them </p>
 
-        <p class="view"><a href="https://github.com/stefco/physics-simulations">View the Project on GitHub <small>stefco/physics-simulations</small></a></p>
+        <p class="view"><a href="https://github.com/kinematica/physics-simulations">View the Project on GitHub <small>kinematica/physics-simulations</small></a></p>
 
 
         <ul>
-          <li><a href="https://github.com/stefco/physics-simulations/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/stefco/physics-simulations/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/stefco/physics-simulations">View On <strong>GitHub</strong></a></li>
+          <li><a href="https://github.com/kinematica/physics-simulations/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/kinematica/physics-simulations/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/kinematica/physics-simulations">View On <strong>GitHub</strong></a></li>
         </ul>
       </header>
       <section>
         <h2>
 <a id="physics-simulations" class="anchor" href="#physics-simulations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Physics Simulations</h2>
+
+<h3>
+<a id="probability-and-entropy" class="anchor" href="#probability-and-entropy" aria-hidden="true"><span class="octicon octicon-link"></span></a>Probability and Entropy</h3>
+
+<p><a href="gas-container">Ideal Gas in a Container:</a> Put a bunch of gas particles in a container and set them loose in random directions. The more you add, the more likely you are to see them evenly distributed between the two sides of the container! Simply put, there are <em>more ways to rearrange them if you split them (roughly) evenly</em>. For example, if you have four particles (let's creatively name them <em>1</em>, <em>2</em>, <em>3</em>, and <em>4</em>), there's only one possible combination with all four of them on the left: 1, 2, 3, and 4 on the left, none on the right. But if you split them evenly, there are <em>six</em> different ways to arrange them (the "|" symbol splits the left and right sides):</p>
+
+<p>(1 2 | 3 4), 
+(1 3 | 2 4), 
+(1 4 | 2 3), 
+(2 3 | 1 4), 
+(2 4 | 1 3), 
+(3 4 | 1 2)</p>
+
+<p>The logarithm of the number of possible combinations is called the <strong>entropy</strong>. So, in the above example, the entropy of having two particles on each side is log(6), which is about 1.8. The entropy of having them all on one side gives an entropy of log(1), which is 0. Physical systems like to be in states where they have a lot of choices—in other words, they prefer high entropy states. In this example, that means that you're <em>much more likely to see the particles be evenly split between the two sides</em>, and that's especially true as you add more particles! We made this especially visual clear using the brightness of the blue background, which gets brighter as the percentage of balls on each side increases. Notice that, even if all the balls start on the same side, they eventually get pretty evenly mixed, and both sides of the screen stay nearly the same shade of blue!.</p>
 
 <h3>
 <a id="rotation" class="anchor" href="#rotation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rotation</h3>
@@ -77,7 +59,6 @@
 <a id="about-us" class="anchor" href="#about-us" aria-hidden="true"><span class="octicon octicon-link"></span></a>About Us</h2>
 
 <p><a href="../">Kinematica</a> is a couple of students in Columbia's Physics Department making fun physics demos and software tools for physics education. Our goals are to find elegant ways to illustrate nonintuitive phenomena through interactive physics demonstrations, and to make it easier for other people to make beautiful physics demos of their own.</p>
->>>>>>> bba9d25a42bbd87661b1ae3f2f1e0490ae547f63
 
 <h2>
 <a id="contributors" class="anchor" href="#contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributors</h2>
@@ -85,23 +66,9 @@
 <p>Stefan Countryman: <a href="https://github.com/stefco" class="user-mention">@stefco</a></p>
 
 <p>Liutauras Rusaitis: <a href="https://github.com/rusaitis" class="user-mention">@rusaitis</a></p>
-<<<<<<< HEAD
-
-<p>Patrick Rutkowski: <a href="https://github.com/patrick-rutkowski" class="user-mention">@patrick-rutkowski</a></p>
-
-      <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/stefco/physics-simulations">Columbia Physics Simulations</a> is maintained by <a href="https://github.com/stefco">stefco</a>.</span>
-
-        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
-      </footer>
-
-    </section>
-
-  
-=======
       </section>
       <footer>
-        <p>This project is maintained by <a href="https://github.com/stefco">stefco</a></p>
+        <p>This project is maintained by <a href="https://github.com/kinematica">kinematica</a></p>
         <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
@@ -117,7 +84,5 @@
             } catch(err) {}
           </script>
 
->>>>>>> bba9d25a42bbd87661b1ae3f2f1e0490ae547f63
   </body>
 </html>
-
