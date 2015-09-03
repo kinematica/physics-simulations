@@ -31,7 +31,7 @@ var Params = function() {
   text = new Params();
   var gui = new dat.GUI();
   gui.add(text, 'message');
-  gui.add(text, 'speed', -5, 5);
+  gui.add(text, 'speed', -2, 2);
   gui.add(text, 'maxwellsDemon');
 //  gui.add(text, 'displayOutline');
   gui.add(text, 'addBall');
@@ -194,14 +194,14 @@ function buildGUI() {
         y: 80,
         w: 450,
         h: 150,
-        points: 200,
+        points: 100,
         xmin: 0,
         xmax: 100,
         ymin: 0,
-        ymax: 10,
+        ymax: 20,
         lineSep: 40, //separation (in px) between helper graph lines
         // xTicks: [2, 4, 6, 8],
-        // yTicks: [2, 4, 6, 8]
+        yTicks: [0, 5, 10, 15, 20]
     });
     myGraph.getTicks();
     myGraph.addFunction();
@@ -378,7 +378,7 @@ function startInSamePlace () {
     var y = Math.random();
 
     // make a bunch of balls in one spot
-    for (var i=0; i<10; i++) {
+    for (var i=0; i<15; i++) {
         createBallAt(x, y);
         console.log('ball number + ' + i + ' created');
     }
