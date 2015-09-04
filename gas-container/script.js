@@ -6,6 +6,32 @@ var sources = {
   // bg: "img/fill.png",
 };
 
+// FULLSCREEN
+$('.fs-button').on('click', function(){
+        var elem = document.getElementById('fullscreen');
+        if(document.webkitFullscreenElement) {
+            document.webkitCancelFullScreen();
+        } else {
+            elem.webkitRequestFullScreen();
+        };
+});
+var fullWidth = function(){
+    return $('#fullscreen').innerWidth();
+}
+var fullHeight = function(){
+    return $('#fullscreen').innerHeight();
+}
+var lastResize = new Date();
+$( window ).resize( function(event){
+    // update stage size
+    stage.setHeight(fullHeight());
+    stage.setWidth(fullWidth());
+    // update rectangle sizes
+    right_rectangle.x(fullWidth()/2);
+    left_rectangle.x(fullWidth()/2);
+    console.log('resize!');
+});
+
 //DEFINE A GRAPH GLOBAL VARIABLE
 var myGraph;
 var graphPoints = [];
@@ -20,7 +46,7 @@ var right_rectangle,
 var Params = function() {
   this.message = 'dat.gui';
   this.speed = 1;				// speed of ball
-  this.maxwellsDemon = false;			// turn on maxwell's demon?
+  this.maxwellsDaemon = false;			// turn on maxwell's demon?
 //  this.displayOutline = false;
   this.addBall = function(){createBall()};
   this.removeBall = function(){removeBall()};
@@ -32,18 +58,19 @@ var Params = function() {
   var gui = new dat.GUI();
   gui.add(text, 'message');
   gui.add(text, 'speed', -2, 2);
-  gui.add(text, 'maxwellsDemon');
+  gui.add(text, 'maxwellsDaemon');
 //  gui.add(text, 'displayOutline');
   gui.add(text, 'addBall');
   gui.add(text, 'removeBall');
   gui.add(text, 'startInSamePlace');
+  gui.close();
 // };
 
 /*
  *  ====CONSTANTS====
  */
 
-var maxBalls = 50;
+var maxBalls = 30;
 var radius= 20;                                 // radius
 var anim;                                       // Konva animation
 var numOnLeft = 0;
@@ -83,8 +110,8 @@ var y;
 
 var stage = new Konva.Stage({
     container: 'container',
-    width: width,
-    height: height
+    width: fullWidth(),
+    height: fullHeight()
 });
 
 var ballLayer = new Konva.Layer();              // put balls here
@@ -132,22 +159,27 @@ function buildScene() {
         align: 'left'
     });
 
-    // rectangle constructors
+    // rectangle constructors; make the rectangles huge. This gives no
+    // performance penalty, but it has the advantage of making resizing faster,
+    // since we just have to move the rectangles (the excess just hangs off the
+    // side of the screen).
     right_rectangle = new Konva.Rect({
-        x: width/2,
+        x: stage.getWidth()/2,
         y: 0,
-        height: height,
-        width: width/2,
+        height: stage.getHeight() * 10,
+        width: stage.getWidth() * 10,
         fill: right_rect_color,
-        // visible: false
     });
     left_rectangle = new Konva.Rect({
-        x: 0,
+        x: stage.getWidth()/2,
         y: 0,
-        height: height,
-        width: width/2,
+        height: stage.getHeight() * 10,
+        width: stage.getWidth() * 10,
+        offset: {
+            x: stage.getWidth() * 10,
+            y: 0
+        },
         fill: left_rect_color,
-        // visible: false
     });
 
     backgroundLayer.add(left_rectangle);
@@ -160,10 +192,11 @@ function buildScene() {
     stage.add(graphStaticLayer);
     stage.add(graphLayer);
 
-    stage.on('click', function() {
+    stage.on('tap click', function() {
+        console.log('tap or click!');
         mousePos = this.getPointerPosition();
-        var x = mousePos.x / width;
-        var y = mousePos.y / height;
+        var x = mousePos.x / stage.getWidth();
+        var y = mousePos.y / stage.getHeight();
         createBallAt(x,y);
     });
 
@@ -227,7 +260,7 @@ var entropy = function(grid) {
 
 // Update ball position
 function updateBall (layer, frame) {
-    var timeDiff = frame.timeDiff;
+    var timeDiff = Math.min(frame.timeDiff,100);
     var stage = layer.getStage();
     var balls = layer.getChildren();
     var height = stage.getHeight();
@@ -258,8 +291,8 @@ function updateBall (layer, frame) {
         }
 
         // floor
-        if (y > (height - radius)) {
-            y = height - radius;
+        if (y > (stage.getHeight() - radius)) {
+            y = stage.getHeight() - radius;
             ball.velocity.y *= -1;
         }
 
@@ -270,23 +303,23 @@ function updateBall (layer, frame) {
         }
 
         // right wall
-        if (x > (width - radius)) {
-            x = width - radius;
+        if (x > (stage.getWidth() - radius)) {
+            x = stage.getWidth() - radius;
             ball.velocity.x *= -1;
         }
 
-    if (text.maxwellsDemon) {
+    if (text.maxwellsDaemon) {
         // maxwell's demon
-        if (x > (width / 2 - radius) && x - text.speed * ball.velocity.x * timeDiff < (width / 2 - radius)) {
-            x = width/2 - radius;
+        if (x > (stage.getWidth() / 2 - radius) && x - text.speed * ball.velocity.x * timeDiff < (stage.getWidth() / 2 - radius)) {
+            x = stage.getWidth()/2 - radius;
             ball.velocity.x *= -1;
-//          maxwellsDaemonImg.setPosition({x: width / 2, y: y});
+//          maxwellsDaemonImg.setPosition({x: stage.getWidth() / 2, y: y});
 //          maxwellsDaemonImg.show();
         }
     }
 
         // see if we're on the left side of the stage; if not, make it false
-        if (x > (width / 2)) {
+        if (x > (stage.getWidth() / 2)) {
             numOnRight++;
         } else {
             numOnLeft++;
@@ -333,8 +366,8 @@ function createBallAt(x, y) {
     // ball constructor
     if (x >= 0 && x <= 1 && y >= 0 && y <= 1) {
         var ball = new Konva.Circle({
-            x: radius + x * (width - 2 * radius),
-            y: radius + y * (height - 2 * radius),
+            x: radius + x * (stage.getWidth() - 2 * radius),
+            y: radius + y * (stage.getHeight() - 2 * radius),
             radius: radius,
             fill: ball_color,
             // velocity: {
@@ -352,6 +385,7 @@ function createBallAt(x, y) {
         // console.log('ballx: ' + ball.velocity.x);
         // console.log('ballx: ' + ball.x());
 
+        ball.cache();
         ballLayer.add(ball);
     } else {
         throw new RangeError('coordinates of new position of the ball must be between zero and one.')
