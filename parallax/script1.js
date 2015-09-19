@@ -36,6 +36,9 @@ function y0star()       {  return fullWidth() / 10;     }
 //           VARIABLES
 //==============================================================================
 
+var stage;
+var bgLayer;
+var motionLayer;
 var xstar = x0star();       // Current x position of the star
 var ystar = y0star();       // Current y position of the star
 var anim;                   // Animation for the triangle
@@ -98,14 +101,14 @@ function init() {
 
 
 function buildScene() {
-    var stage = new Konva.Stage({
+    stage = new Konva.Stage({
         container: 'container',
         width: fullWidth(),
         height: fullHeight()
     });
 
-    var bgLayer = new Konva.Layer();
-    var motionLayer = new Konva.Layer();
+    bgLayer = new Konva.Layer();
+    motionLayer = new Konva.Layer();
 
     /*
     * create a circle representing earth's orbit and a smaller one for the sun
