@@ -46,8 +46,8 @@ var highlight_line_color = '#cc9999';
 function earthRadius()  {  return fullWidth() / 40;     }
 function sunRadius()    {  return fullWidth() / 160;    }
 function orbitRadius()  {  return fullWidth() / 40;     }
-function innerRadius()  {  return fullWidth() / 160;    }
-function outerRadius()  {  return fullWidth() / 80;     }
+function innerRadius()  {  return fullWidth() / 120;    }
+function outerRadius()  {  return fullWidth() / 60;     }
 function x0()           {  return fullWidth() / 10;     }
 function y0()           {  return fullWidth() / 10;     }
 function x0star()       {  return 7 * fullWidth() / 10; }
@@ -267,7 +267,13 @@ function buildScene() {
         innerRadius: innerRadius(),
         outerRadius: outerRadius(),
         fill: star_color,
-        draggable: true
+        draggable: true,
+        hitFunc: function(context) {
+            context.beginPath();
+            context.arc(0, 0, this.getOuterRadius() * 2.5, 0, Math.PI * 2, true);
+            context.closePath();
+            context.fillStrokeShape(this);
+        }
     });
 
     /*
