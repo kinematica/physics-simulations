@@ -48,9 +48,19 @@ $( window ).resize( function(event){
     // update stage size
     stage.setHeight(fullHeight());
     stage.setWidth(fullWidth());
+    // update star position
+    sun.x(x0());
+    sun.y(y0());
+    orbit.radius(orbitRadius());
+    orbit.x(x0());
+    orbit.y(y0());
+    anim.start();
+    anim.stop();
     // update rectangle sizes
+    /*
     right_rectangle.x(fullWidth()/2);
     left_rectangle.x(fullWidth()/2);
+    */
     console.log('resize!');
 });
 
