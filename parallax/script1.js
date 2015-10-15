@@ -19,7 +19,7 @@ gui.add(params, 'deltaTheta', 0, 2);
 // gui.close();
 
 //==============================================================================
-//           STUFF FOR RESPONSIVE RESIZING
+//           STUFF FOR RESPONSIVE RESIZING AND FULLSCREEN
 //==============================================================================
 
 var fullWidth = function(){
@@ -28,6 +28,31 @@ var fullWidth = function(){
 var fullHeight = function(){
     return $('#fullscreen').innerHeight();
 }
+// FULLSCREEN
+$('.fs-button').on('click', function(){
+        var elem = document.getElementById('fullscreen');
+        if(document.webkitFullscreenElement) {
+            document.webkitCancelFullScreen();
+        } else {
+            elem.webkitRequestFullScreen();
+        };
+});
+var fullWidth = function(){
+    return $('#fullscreen').innerWidth();
+}
+var fullHeight = function(){
+    return $('#fullscreen').innerHeight();
+}
+var lastResize = new Date();
+$( window ).resize( function(event){
+    // update stage size
+    stage.setHeight(fullHeight());
+    stage.setWidth(fullWidth());
+    // update rectangle sizes
+    right_rectangle.x(fullWidth()/2);
+    left_rectangle.x(fullWidth()/2);
+    console.log('resize!');
+});
 
 //==============================================================================
 //           COLORS
