@@ -15,7 +15,6 @@ var GuiParams = function() {
 
 params = new GuiParams();
 var gui = new dat.GUI();
-gui.add(params, 'deltaTheta', 0, 2);
 // gui.close();
 
 //==============================================================================
@@ -28,6 +27,8 @@ var fullWidth = function(){
 var fullHeight = function(){
     return $('#fullscreen').innerHeight();
 }
+var oldFullWidth = fullWidth();
+var oldFullHeight = fullHeight();
 // FULLSCREEN
 $('.fs-button').on('click', function(){
         var elem = document.getElementById('fullscreen');
@@ -37,32 +38,7 @@ $('.fs-button').on('click', function(){
             elem.webkitRequestFullScreen();
         };
 });
-var fullWidth = function(){
-    return $('#fullscreen').innerWidth();
-}
-var fullHeight = function(){
-    return $('#fullscreen').innerHeight();
-}
 var lastResize = new Date();
-$( window ).resize( function(event){
-    // update stage size
-    stage.setHeight(fullHeight());
-    stage.setWidth(fullWidth());
-    // update star position
-    sun.x(x0());
-    sun.y(y0());
-    orbit.radius(orbitRadius());
-    orbit.x(x0());
-    orbit.y(y0());
-    anim.start();
-    anim.stop();
-    // update rectangle sizes
-    /*
-    right_rectangle.x(fullWidth()/2);
-    left_rectangle.x(fullWidth()/2);
-    */
-    console.log('resize!');
-});
 
 //==============================================================================
 //           COLORS
@@ -199,11 +175,11 @@ function rUpperLimit() {
     if (thetaMax < 0) {
         return Infinity;
     } else {
-        return oRadius / Math.tan(thetaMax);
+        return orbitRadius() / Math.tan(thetaMax);
     }
 }
 // put a lower bound on R
-function rLowerLimit() { return oRadius / Math.tan( theta() + Math.PI * params.deltaTheta / 180 ); }
+function rLowerLimit() { return orbitRadius() / Math.tan( theta() + Math.PI * params.deltaTheta / 180 ); }
 // calculate uncertainty in distance
 function deltaR() { return rUpperLimit() - rLowerLimit(); }
 // calculate max-distance location of the star
@@ -211,12 +187,6 @@ function starPlusDelta() {
     var dR = rUpperLimit();
     var runit = rhat();
     return [x0() + dR*runit[0], y0() + dR*runit[1]];
-    /*
-    var rUpper = [xstar, ystar]; //r();
-    rUpper[0] += dR * runit[0];
-    rUpper[1] += dR * runit[1];
-    return rUpper;
-    */
 }
 // calculate min-distance location of the star
 function starMinusDelta() {
@@ -390,13 +360,41 @@ function buildScene() {
     star.on('dragend', function() {
         anim.stop();
     });
+    
+    // add params here?
+    gui.add(params, 'deltaTheta', 0, 2).onChange(updateTriangleAndDraw);
+
+    // window resize handling
+    $( window ).resize( function(event){
+        // update stage size
+        stage.setHeight(fullHeight());
+        stage.setWidth(fullWidth());
+        // update solar system position
+        sun.x(x0());
+        sun.y(y0());
+        sun.radius(sunRadius());
+        orbit.radius(orbitRadius());
+        orbit.x(x0());
+        orbit.y(y0());
+        updateTriangle();
+        console.log('resize!');
+        // update star position
+        xstar = xstar * fullWidth() / oldFullWidth;
+        ystar = ystar * fullWidth() / oldFullWidth;
+        oldFullWidth = fullWidth();
+        oldFullHeight = fullHeight();
+        star.x(xstar);
+        star.y(ystar);
+        motionLayer.draw();
+    });
 }
 
 //==============================================================================
 //           DEFINE ANIMATIONS
 //==============================================================================
 
-var anim = new Konva.Animation(function(frame) {
+// Note that the triangle update animation doesn't require frame at all
+function updateTriangle(frame) {
     xstar = star.getX();
     ystar = star.getY();
     triangle.points(triangleVertices());
@@ -414,7 +412,14 @@ var anim = new Konva.Animation(function(frame) {
     $('#deltaTheta').text(Math.round(100*params.deltaTheta)/100);
     $('#deltaR').text(Math.round(10*deltaR())/10);
     $('#relativeUncertainty').text((Math.round(100*deltaR()/d())).toString() + '%');
-}, motionLayer);
+}
+
+function updateTriangleAndDraw() {
+    updateTriangle();
+    motionLayer.draw()
+}
+
+var anim = new Konva.Animation(updateTriangle, motionLayer);
 
 //==============================================================================
 //           DEFINE ANIMATIONS
