@@ -38,6 +38,10 @@ function Demo(config) {
     this.scale.length   = c.scale.length || '1';
     this.scale.time     = c.scale.time   || '1';
 
+    // set the scale factor between lengths and pixels; this is meant to be
+    // updated on every resize.
+    this.scale.factor   = this.determineScaleFactor();
+
     // set the id of the div which should contain the demo
     this.container      = c.container || 'container';
 
@@ -120,9 +124,7 @@ Demo.prototype.buildScene       = function(){
 }
 
 // TODO:
-Demo.pix.scale = function(){};
-Demo.pix.x = function(x){};
-Demo.pix.y = function(y){};
+Demo.determineScaleFactor = function(){throw new Error('function not defined')};
 
 //==============================================================================
 //           CONSTRUCT A SHAPE OBJECT, BUT DON'T MAKE THE KONVA OBJECT YET
@@ -149,6 +151,57 @@ Demo.Shape = function(config) {
 
 // TODO
 Demo.Shape.prototype.initialize() {}
+
+/**
+ * Define the property names that correspond to Konva properties. When building
+ * Konva objects for display, these properties will be used to define the new
+ * Konva object. Scale Attributes depend not only on underlying variable values,
+ * but also on the scale factor of the display; they must therefore be updated
+ * whenever the display is resized.
+ */
+Demo.Shape.ScaledAttributes = [
+    'radius',
+    'height',
+    'width',
+    'x',
+    'y',
+    'points'
+]
+
+/**
+ * Define the property names that correspond to Konva properties. When building
+ * Konva objects for display, these properties will be used to define the new
+ * Konva object. The Attributes property includes non-scaling attributes only.
+ */
+Demo.Shape.Attributes = [
+    'color',
+    'points'
+];
+
+/**
+ * Update any dynamic values, i.e. fields that are defined as functions rather
+ * than variables. Each of these must take the time `t` (and, optionally, the
+ * time difference since the last frame, `dt`) as arguments.
+ * @this {Shape}
+ */
+Demo.Shape.prototype.update = function(t, dt) {
+    var shape = this;
+    Demo.Shape.Attributes.forEach( function(e) {
+        if(typeof(shape.e) === 'function') shape.konvaObject[e](shape.e(t,dt));
+    });
+}
+
+Demo.Shape.prototype.resize = function(t, dt) {
+    this.scale.factor   = this.determineScaleFactor();
+    var shape = this;
+    Demo.Shape.ScaledAttributes.forEach( function(e) {
+        if (typeof(shape.e) === 'function') {
+            shape.konvaObject[e](shape.e(t,dt) * shape.scale.factor);
+        } else if (shape.e) {
+            shape.konvaObject[e](shape.e * shape.scale.factor);
+        }
+    });
+}
 
 //==============================================================================
 //           CONSTRUCT A SHAPE OBJECT, BUT DON'T MAKE THE KONVA OBJECT YET
