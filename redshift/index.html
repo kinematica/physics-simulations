@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" type="text/css" href="../style.css">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  <script type="text/javascript" src="../scripts/dat.gui.min.js"></script>
+  <script src="../js/tinycolor.js"></script>
+  <script src="https://cdn.rawgit.com/konvajs/konva/0.9.5/konva.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Redshift Demo</title>
+</head>
+<body>
+    <!-- take the whole thing fullscreen -->
+    <div id="fullscreen" class="html5-fullscreen-api">
+
+        <!-- container for konva stage -->
+        <div id="container"></div>
+
+        <!-- display information about the demo -->
+        <!-- TODO: update this to make it clearer what each thing means-->
+        <!-- this is where display stuff went in previous demo
+        <div id="display">
+            <p>
+                Angle, θ: <span id="thetaDisplay"></span>
+                <br>
+                Calculated distance, R: <span id="dist"></span>
+                <br>
+                Maximum distance, R₊: <span id="maxDist"></span>
+                <br>
+                Minimum distance, R₋: <span id="minDist"></span>
+                <br>
+                Angle Measurement Uncertainty, Δθ: <span id="deltaTheta"></span>
+                <br>
+                Resulting Distance Uncertainty, ΔR ≡ R₊ - R₋: <span id="deltaR"></span>
+                <br>
+                Relative Uncertainty in the Distance, ΔR / R: <span id="relativeUncertainty">
+            </p>
+        </div>
+        -->
+
+        <!-- fullscreen button -->
+        <i class="fs-button fa fa-arrows-alt fa-2x"></i>
+
+        <script src="../js/kinematica/ui.js"></script>
+        <script src="../js/kinematica/math.js"></script>
+        <script src="../js/kinematica/kinematica.js"></script>
+        <script src="script.js"></script>
+
+    </div>
+</body>
+</html>
