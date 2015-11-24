@@ -198,8 +198,8 @@ function buildScene() {
     motionLayer.add(star);
     motionLayer.add(photon);
 
-    stage.add(motionLayer);
     stage.add(bgLayer);
+    stage.add(motionLayer);
 
     anim.start();
 
