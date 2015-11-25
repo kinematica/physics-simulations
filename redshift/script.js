@@ -10,7 +10,6 @@
 // a function for restarting
 function restart(){
     t = 0;
-    photons.forEach( function(photon) {photon.fill(color());} );
     stopCreatingPhotons();
     createPhotonsEverySecond();
     motionLayer.draw();
