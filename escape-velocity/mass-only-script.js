@@ -319,6 +319,11 @@ var launch = false;
 		projectile.moveProjectile(launch, frame);
 		writeMessages('Radius is '+(Math.round(obj.radius/100)*100).toString()+'km','Planet mass is '+(Math.round(obj.mass/100)*Math.pow(10,26)).toString()+'kg','Escape velocity is '+Math.round(escapeVelocity())+'km/s');
 		writeEscape('Stuck');
+		$('#planetRadius').text((Math.round(obj.radius/100)*100).toString()+'km');
+		$('#planetMass').text((Math.round(obj.mass/100)*Math.pow(10,26)).toString()+'kg');
+		$('#escapeVelocity').text(Math.round(escapeVelocity()).toString()+'km/s');
+
+
 
 	}
 

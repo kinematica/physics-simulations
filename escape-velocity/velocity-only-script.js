@@ -32,9 +32,6 @@
 // Create the GUI and populate it with the parameters from obj. These will subesquently alter the properties
 // of the planet and the projectile. 
     var gui = new dat.GUI();
-	gui.add(obj, 'radius', 1, 1000000 ).listen();
-
-	gui.add(obj, 'mass', 5, (5 * Math.pow(10,6))).listen();
 
 	gui.add(obj,'projectile_velocity', 0, 1000).listen();
 
@@ -55,17 +52,11 @@
 // Build the control layer and the launch button it will contain
     var controlLayer = new Konva.Layer();
 
-// Try to have an image of the Earth as the fill of the planet
-    var earth = new Image();
-
-    earth.src = 'earth.jpg';
-
     var launchButton = new Konva.Circle( {
     	    // Put the button in the bottom right corner of the screen
     	    x: fullWidth() - 50,
 	    y: fullHeight() - 50,
 	    radius: 50,
-	    //fillPatternImage: earth.src
 	    fill: 'green'
     });
 
@@ -73,7 +64,7 @@
 // launch will be set to false. If launch is false then the projectile is ready to launch and the button will
 // launch it.
 
-    var launch = false;
+var launch = false;
 
     launchButton.on('click', function() {
 
@@ -84,6 +75,8 @@
 	    };
 
     });
+
+
 
 // This is my planet. It's radius and opacity (toggled indirectly with the mass) are controlled
 // via the GUI.
@@ -150,22 +143,6 @@
    	    textFour.setText(message);
 
     };
-
-
-    // This function will be added to planet so that we can change its radius using the GUI
-    var changeRadius = function() {
-
-            this.setRadius(obj.radius * km_to_pixel_conversion);
-    };
-
-    // This function will be added to planet to change its opacity using the GUI
-    var changeOpacity = function() {
-
-	    this.opacity(obj.mass/(5 * Math.pow(10,6)));
-    };
-
-    planet.changeRadius = changeRadius;
-    planet.changeOpacity = changeOpacity;
 
     // This function will govern the function of the projectile. If launch is false, then the projectile will be fixed to
     // the surface of the planet. If launch is true, it flies up relative to the now-fixed surface of the planet and either
@@ -256,16 +233,8 @@
 
     };
 
-    // Change the color of the projectile
-    var changeColor = function(color) {
-       
-        this.fill(color);
-
-    };
-
     projectile.changeVelocity = changeVelocity;
     projectile.moveProjectile = moveProjectile;
-    projectile.changeColor = changeColor;
 
     var textOne = new Konva.Text( {
     	    x: 20,
@@ -321,12 +290,14 @@
 	// If launch is false, allow the GUI to alter the planet and projectile
 	if (launch === false) {
 
-		planet.changeRadius();
-		planet.changeOpacity();
 		projectile.changeVelocity();
 		projectile.moveProjectile(launch, frame);
 		writeMessages('Radius is '+(Math.round(obj.radius/100)*100).toString()+'km','Planet mass is '+(Math.round(obj.mass/100)*Math.pow(10,26)).toString()+'kg','Escape velocity is '+Math.round(escapeVelocity())+'km/s');
 		writeEscape('Stuck');
+		$('#planetRadius').text((Math.round(obj.radius/100)*100).toString()+'km');
+		$('#planetMass').text((Math.round(obj.mass/100)*Math.pow(10,26)).toString()+'kg');
+		$('#escapeVelocity').text(Math.round(escapeVelocity()).toString()+'km/s');
+
 
 	}
 

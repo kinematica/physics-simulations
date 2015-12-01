@@ -1,3 +1,10 @@
+//////////////////////////////////////////////////////
+/////      WINDOW SIZE AND SCALING FUNCTIONS    /////
+//////////////////////////////////////////////////////
+
+
+
+
 // Create functions that record the width and height of the current screen
     var fullWidth = function() {
 	return window.innerWidth;
@@ -7,9 +14,17 @@
 	return window.innerHeight;
     };
 
-    // Set the scale for kilometers tp pixels using the height of the screen, since that will dicate planet radius.
-    // We will divide half of the total height of the screen by the largest allowed radius, 1 million km
+// Set the scale for kilometers tp pixels using the height of the screen, since that will dicate planet radius.
+// We will divide half of the total height of the screen by the largest allowed radius, 1 million km
     var km_to_pixel_conversion =  (fullHeight()/2)/1000000;
+
+
+/////////////////////////////////////////////////////////
+//////////      GUI PARAMETERS AND CONTROLS     /////////
+/////////////////////////////////////////////////////////
+
+
+
 
 // Create the object that we will use to populate the parameters of our GUI
     var obj = {
@@ -29,15 +44,66 @@
 	projectile_velocity: 617.5
     };
 
+
+
 // Create the GUI and populate it with the parameters from obj. These will subesquently alter the properties
 // of the planet and the projectile. 
-    var gui = new dat.GUI();
-	gui.add(obj, 'radius', 1, 1000000 ).listen();
+    var gui = new dat.GUI({width: 600});
 
-	gui.add(obj, 'mass', 5, (5 * Math.pow(10,6))).listen();
+// When the radius variable is changed in the GUI, update the size and position of the planet and projectile
+// as well as the gravitational properties of the planet
+    gui.add(obj, 'radius', 1, 1000000 ).onChange( function() {
+		
+		if (launch === false) {
+			
+			planet.changeRadius();
+			projectile.moveProjectile(launch);
+			escVel = escapeVelocity();
+			gravAccelTimesDistanceSquared = gravityAccel();
+			$('#planetRadius').text((Math.round(obj.radius/100)*100).toString()+'km');
+			$('#escapeVelocity').text(Math.round(escapeVelocity()).toString()+'km/s');
 
-	gui.add(obj,'projectile_velocity', 0, 1000).listen();
 
+
+		};
+
+	});
+
+// When the mass variable is changed, update the opacity of the planet and its gravitational properties
+	gui.add(obj, 'mass', 5, (5 * Math.pow(10,6))).onChange( function() {
+
+		if (launch === false) {
+
+			planet.changeOpacity();
+			escVel = escapeVelocity();
+			gravAccelTimesDistanceSquared = gravityAccel();
+			$('#planetMass').text((Math.round(obj.mass/100)*Math.pow(10,26)).toString()+'kg');
+			$('#escapeVelocity').text(Math.round(escapeVelocity()).toString()+'km/s');
+
+
+
+
+
+		};
+
+	});
+
+// When the object velocity is changed, update its value in the projectile object
+	gui.add(obj,'projectile_velocity', 0, 1000).onChange( function() {
+
+		if (launch === false) {
+
+			projectile.changeVelocity();
+
+
+
+		};
+
+	});
+
+///////////////////////////////////////////////////////
+/////////////      KONVA STUFF    ////////////////////
+///////////////////////////////////////////////////////
 
 // Create the Konva stage that will contain everything we are doing		
     var stage = new Konva.Stage( {
@@ -55,23 +121,20 @@
 // Build the control layer and the launch button it will contain
     var controlLayer = new Konva.Layer();
 
-// Try to have an image of the Earth as the fill of the planet
-    var earth = new Image();
-
-    earth.src = 'earth.jpg';
-
-    var launchButton = new Konva.Circle( {
-    	    // Put the button in the bottom right corner of the screen
-    	    x: fullWidth() - 50,
-	    y: fullHeight() - 50,
-	    radius: 50,
-	    //fillPatternImage: earth.src
-	    fill: 'green'
-    });
-
 // This button determines the launch state of the projectile. If the projectile is not currently travelling,
 // launch will be set to false. If launch is false then the projectile is ready to launch and the button will
 // launch it.
+
+    var launchButton = new Konva.Text( {
+    	    // Put the button in the bottom right corner of the screen
+    	    x: fullWidth() - 425,
+	    y: fullHeight() - 125,
+	    fontFamily: 'Calibri',
+	    fontStyle: 'bold',
+	    fontSize: 120,
+	    fill: 'red',
+	    text: 'LAUNCH!'
+    });
 
     var launch = false;
 
@@ -80,6 +143,12 @@
     	    if (launch === false) {
 	    	
 		launch = true;
+
+		//if (projectile.init_velocity > escVel) {
+
+		//	writeEscape('Escaped!');
+
+		//};
 
 	    };
 
@@ -100,27 +169,8 @@
 	    // value of obj.mass to normalize it between 0 and 1 and allow it to set the opacity.
             opacity: (obj.mass/(5 * Math.pow(10,6))),
 	    // It's green
-            fill: 'green'
+            fill: '#00a0dc'
     });
-
-// Write functions to find the current escape velocity and acceleration due to gravity
-
-// Escape velocity uses the gravitational constant G in units of ---> 6.67*10^-11 m^3 / (kg s^2) 
-    var escapeVelocity = function() {
-            var temp = Math.sqrt(2*(6.67 * Math.pow(10,-11))*(obj.mass*Math.pow(10,24))/(obj.radius*1000));
-	    // Divide result by 1000 so that it is in km/s
-	    return temp/1000;
-    };
-
-    // Write a function to find the current acceleration due to gravity
-    var gravityAccel = function() {
-    	    // G*M/(r^2) 													// Use 1 mill here since the planet.x() should always
-	    //															// be 1000000 km from the left edge of the screen 
-    	    var temp = (6.67 * Math.pow(10,-11))*(obj.mass*Math.pow(10,24))/Math.pow((( ((projectile.x()-5)/km_to_pixel_conversion) - 1000000 )*1000),2);
-	    // Divide result by 1000 so that it is in km/s^2
-	    return temp/1000;
-    };
-
 
 // Our projectile will be a ball sitting on the rightmost edge of the planet. It will have a radius of 5 pixels. 
     var projectile = new Konva.Circle( {
@@ -134,17 +184,23 @@
 	    stroke: 'black'
     });
 
-// Set the initial projectile velocity to the GUI value
+// Set the projectile velocity to the GUI value
     projectile.velocity = obj.projectile_velocity;
-    
-    var writeMessages = function(message1, message2, message3) {
-    	    textOne.setText(message1);
-    	    textTwo.setText(message2);
-	    textThree.setText(message3);
-	    
-    };
 
-   // Tell them if the projectile escaped
+// Also set the initial projectile velocity. This is slightly different because, while .velocity will always give a real-time value of the projectile's speed
+// during launch, this value will simply hold the starting projectile velocity in any scenario.
+   projectile.init_velocity = obj.projectile_velocity;
+
+   var textFour = new Konva.Text( {
+    	    x: 20,
+	    y: 110,
+	    fontFamily: 'Calibri',
+	    fontSize: 20,
+	    text: '_',
+	    fill: 'white'
+    });
+
+ // Tell them if the projectile escaped
    var writeEscape = function(message) {
 
    	    textFour.setText(message);
@@ -152,13 +208,13 @@
     };
 
 
-    // This function will be added to planet so that we can change its radius using the GUI
+// This function will be added to planet so that we can change its radius using the GUI
     var changeRadius = function() {
 
             this.setRadius(obj.radius * km_to_pixel_conversion);
     };
 
-    // This function will be added to planet to change its opacity using the GUI
+// This function will be added to planet to change its opacity using the GUI
     var changeOpacity = function() {
 
 	    this.opacity(obj.mass/(5 * Math.pow(10,6)));
@@ -167,21 +223,21 @@
     planet.changeRadius = changeRadius;
     planet.changeOpacity = changeOpacity;
 
-    // This function will govern the function of the projectile. If launch is false, then the projectile will be fixed to
-    // the surface of the planet. If launch is true, it flies up relative to the now-fixed surface of the planet and either
-    // escapes the pull of the planet or comes back down.
+// This function will govern the function of the projectile. If launch is false, then the projectile will be fixed to
+// the surface of the planet. If launch is true, it flies up relative to the now-fixed surface of the planet and either
+// escapes the pull of the planet or comes back down.
 
-    // Make some variables that will temporarily contain the projectile's velocity and position while updating them.
+// Make some variables that will temporarily contain the projectile's velocity and position while updating them.
     var currentPos;
     var currentVel;
 
-    var moveProjectile = function(launch, frame) {
+    var moveProjectile = function(launch) {
 
 	// Get the time difference from the last frame
 	//var timeDiff = frame.timeDiff/1000;
 
-    	// For now make the timeDiff 10 seconds per frame to speed things up
-	var timeDiff = 10;
+    	// For now make the timeDiff 20 seconds per frame to speed things up
+	var timeDiff = 20;
 	
 	if (launch === false)
 	{
@@ -201,14 +257,14 @@
 	    currentPos += currentVel*timeDiff;
 
 	    // Don't forget to multiply the acceleration due to gravity by the conversion factor, since it is in km/s^2
-	    currentVel -= gravityAccel() * km_to_pixel_conversion * timeDiff;
+	    currentVel -= (gravAccelTimesDistanceSquared/Math.pow((( ((projectile.x()-5)/km_to_pixel_conversion) - 1000000 )*1000),2))* km_to_pixel_conversion * timeDiff;
 
 	    // Check that the projectile has reached the right edge of the screen. If it has, two things can happen:
 	    // - It disappears because its initial velocity was larger than the escape velocity
 	    // - It returns to the planet because its initial velocity was too low
 	    if (currentPos > (fullWidth()-5)) {
 
-	        if (obj.projectile_velocity >= escapeVelocity()) {
+	        if (this.init_velocity >= escVel) {
 
 			currentPos = fullWidth() + 10;
 			currentVel = 0;
@@ -253,102 +309,99 @@
     var changeVelocity = function() {
 
         this.velocity = obj.projectile_velocity;
-
-    };
-
-    // Change the color of the projectile
-    var changeColor = function(color) {
-       
-        this.fill(color);
+	this.init_velocity = obj.projectile_velocity;
 
     };
 
     projectile.changeVelocity = changeVelocity;
     projectile.moveProjectile = moveProjectile;
-    projectile.changeColor = changeColor;
+ 
+//////////////////////////////////////////////
+//////     KINEMATIC FUNCTIONS     //////////
+//////////////////////////////////////////////
 
-    var textOne = new Konva.Text( {
-    	    x: 20,
-	    y: 20,
-	    fontFamily: 'Calibri',
-	    fontSize: 20,
-	    text: 'Radius!',
-	    fill: 'white'
-    });
+// Write functions to find the current escape velocity and acceleration due to gravity
 
-    var textTwo = new Konva.Text( {
-    	    x: 20,
-	    y: 50,
-	    fontFamily: 'Calibri',
-	    fontSize: 20,
-	    text: 'Mass!',
-	    fill: 'white'
-    });
+// Escape velocity uses the gravitational constant G in units of ---> 6.67*10^-11 m^3 / (kg s^2) 
+    var escapeVelocity = function() {
+            var temp = Math.sqrt(2*(6.67 * Math.pow(10,-11))*(obj.mass*Math.pow(10,24))/(obj.radius*1000));
+	    // Divide result by 1000 so that it is in km/s
+	    return temp/1000;
+    };
 
-    var textThree = new Konva.Text( {
-    	    x: 20,
-	    y: 80,
-	    fontFamily: 'Calibri',
-	    fontSize: 20,
-	    text: 'Escape Velocity!',
-	    fill: 'white'
-    });
+// Write a function to find the current acceleration due to gravity
+    var gravityAccel = function() {
+    	    // G*M/(r^2) 													// Use 1 mill here since the planet.x() should always
+	    //															// be 1000000 km from the left edge of the screen 
+    	    //var temp = (6.67 * Math.pow(10,-11))*(obj.mass*Math.pow(10,24))/Math.pow((( ((projectile.x()-5)/km_to_pixel_conversion) - 1000000 )*1000),2);
 
-    var textFour = new Konva.Text( {
-    	    x: 20,
-	    y: 110,
-	    fontFamily: 'Calibri',
-	    fontSize: 20,
-	    text: '_',
-	    fill: 'white'
-    });
+	    var temp = (6.67 * Math.pow(10,-11))*(obj.mass*Math.pow(10,24));
+	    // Divide result by 1000 so that it is in km/s^2
+	    return temp/1000;
+    };
 
+// Create a gravity acceleration variable that will store the constantly changing value of gravityAccel while launch is false, and then store it when launch is true.
+    var gravAccelTimesDistanceSquared = gravityAccel();
+// Do the same for escape velocity, since we only want the escape velocity calculated when the projectile launched.
+    var escVel = escapeVelocity();
+
+
+    
+    
     controlLayer.add(launchButton);
     stage.add(controlLayer);
 
 
     projectile.cache();
     backGroundLayer.add(projectile); 
-    backGroundLayer.add(textTwo);
-    backGroundLayer.add(textOne);
-    backGroundLayer.add(textThree);
     backGroundLayer.add(textFour);
     backGroundLayer.add(planet);
     stage.add(backGroundLayer);
 
+    $('#planetRadius').text((Math.round(obj.radius/100)*100).toString()+'km');
+    $('#escapeVelocity').text(Math.round(escapeVelocity()).toString()+'km/s');
+    $('#planetMass').text((Math.round(obj.mass/100)*Math.pow(10,26)).toString()+'kg');
+
+
+
+ 
     var anim = new Konva.Animation( function(frame) {
 
 	// If launch is false, allow the GUI to alter the planet and projectile
-	if (launch === false) {
+	//if (launch === false) {
 
-		planet.changeRadius();
-		planet.changeOpacity();
-		projectile.changeVelocity();
-		projectile.moveProjectile(launch, frame);
-		writeMessages('Radius is '+(Math.round(obj.radius/100)*100).toString()+'km','Planet mass is '+(Math.round(obj.mass/100)*Math.pow(10,26)).toString()+'kg','Escape velocity is '+Math.round(escapeVelocity())+'km/s');
-		writeEscape('Stuck');
+	//	writeEscape('Stuck');	
+	//}
 
-	}
+//else
+	if (launch === true) {
 
-	else if (launch === true) {
-
-		projectile.moveProjectile(launch, frame);
-
-		if (obj.projectile_velocity > escapeVelocity()) {
-
-			writeEscape('Escaped!');
-
-		}
+		projectile.moveProjectile(launch);	
 
 		if (Math.round(projectile.x()) <= Math.round(planet.x() + planet.radius() + 5)) {
 
 			launch = false;
+			planet.changeRadius();
+			planet.changeOpacity();
+			projectile.changeVelocity();
+			projectile.moveProjectile(launch);
+			escVel = escapeVelocity();
+			gravAccelTimesDistanceSquared = gravityAccel();
+
 
 		}
 
 		else if (Math.round(projectile.x()) >= Math.round(fullWidth() + 10)) {
 
 			launch = false;
+			planet.changeRadius();
+			planet.changeOpacity();
+			projectile.changeVelocity();
+			projectile.moveProjectile(launch);
+			escVel = escapeVelocity();
+			gravAccelTimesDistanceSquared = gravityAccel();
+
+
 
 		};
 
