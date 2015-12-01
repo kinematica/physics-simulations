@@ -10,8 +10,14 @@
 // a function for restarting
 function restart(){
     t = 0;
-    photon.fill(color());
+    stopCreatingPhotons();
+    createPhotonsEverySecond();
     motionLayer.draw();
+}
+
+// a function for switching the direction of the star
+function switchDirection() {
+    direction *= -1;
 }
 //************BOILERPLATE
 //******************************************************************************
@@ -24,7 +30,9 @@ function restart(){
 // TODO: just phrase this as a bunch of editable parameters. also have constants.
 var GuiParams = function() {
     this.speed = 0.00,
-    this.restart = restart
+    this.switchDirection = switchDirection,
+    this.restart = restart,
+    this.stopCreatingPhotons = stopCreatingPhotons
 };
 
 // instantiate the params object and the gui; add the former to the latter later
@@ -32,9 +40,10 @@ params = new GuiParams();
 var gui = new dat.GUI();
 
 // add the parameters to the gui object
-gui.add(params, 'speed', -0.05, 0.05).onChange(restart);
+gui.add(params, 'speed', 0, 0.05).onChange(restart);
+gui.add(params, 'switchDirection').onChange(restart);
 gui.add(params, 'restart');
-
+gui.add(params, 'stopCreatingPhotons')
 
 //==============================================================================
 //           STUFF FOR RESPONSIVE RESIZING AND FULLSCREEN
@@ -99,7 +108,9 @@ var motionLayer;
 var anim;                   // Animation for the triangle
 var earth;
 var star;
-var photon;
+var photons = [];           // An array holding all current photons
+var photonCreatorId;        // This is the process id for the function that periodically creates photons
+var direction = -1;         // The direction of star motion
 //************BOILERPLATE
 //******************************************************************************
 
@@ -107,8 +118,8 @@ var photon;
 //           3. 'TRUE' POSITIONS/SCALES, TIME VARYING (BEFORE SCALING; MAKE OO)
 //==============================================================================
 
-function starX(t)           { return starX0 + params.speed*t;          }
-function photonX(t)         { return starX0 - 0.1*t;                   }
+function starX(t)           { return starX0 + direction * params.speed * t; }
+function photonX(t, x0)     { return x0 - 0.1*t;                            }
 
 //==============================================================================
 //           SCALED LENGTHS
@@ -119,7 +130,7 @@ function photonX(t)         { return starX0 - 0.1*t;                   }
 function scaledEarthX(t)        { return earthX             * fullWidth() }
 function scaledEarthY(t)        { return earthY             * fullWidth() }
 function scaledEarthR(t)        { return earthRadius        * fullWidth() }
-function scaledPhotonX(t)       { return photonX(t)         * fullWidth() }
+function scaledPhotonX(t, x0)   { return photonX(t, x0)     * fullWidth() }
 function scaledPhotonY(t)       { return photonY            * fullWidth() }
 function scaledPhotonR(t)       { return photonRadius       * fullWidth() }
 function scaledStarX(t)         { return starX(t)           * fullWidth() }
@@ -141,13 +152,41 @@ function doppler(v) {
 // calculate the color of the ball based on the speed
 function color() {
     // center around hue = 1/6, which is yellow
-    var hue = doppler(params.speed) / 3 - 1 / 6;
+    var hue = doppler(direction * params.speed) / 3 - 1 / 6;
     return tinycolor.fromRatio({ h: hue, s: 1, l: 0.5 }).toHexString();
 }
 
 //==============================================================================
 //           KONVA SETUP: BUILD THE SCENE
 //==============================================================================
+
+// make a new photon and add it to the photons array; later, use splice to remove
+function createPhoton() {
+    // Find starting position of the photon
+    var x0 = starX(t*0.001);
+    var photon = new Konva.Circle({
+        x:      scaledPhotonX(0, x0),
+        y:      scaledPhotonY(0),
+        radius: scaledPhotonR(0),
+        fill: color()
+    });
+    // keep track of time for each photon since it was emitted
+    photon.time = 0;
+    photon.x0 = x0;
+    motionLayer.add( photon )
+    photons.push( photon )
+}
+
+// schedule a new photon to be emitted every second; returns the id of the scheduled function
+function createPhotonsEverySecond() {
+    photonCreatorId = window.setInterval(createPhoton, 1000);
+}
+
+// stop emitting photons; you have to provide the id of the scheduled function
+// that must be cancelled
+function stopCreatingPhotons() {
+    window.clearInterval(photonCreatorId);
+}
 
 //******************************************************************************
 //************BOILERPLATE
@@ -176,12 +215,7 @@ function buildScene() {
         fill: earth_color
     });
 
-    photon = new Konva.Circle({
-        x:      scaledPhotonX(0),
-        y:      scaledPhotonY(0),
-        radius: scaledPhotonR(0),
-        fill: color()
-    });
+    createPhotonsEverySecond();
 
     star = new Konva.Star({
         x:      scaledStarX(0),
@@ -196,10 +230,9 @@ function buildScene() {
 //************BOILERPLATE
     bgLayer.add(earth);
     motionLayer.add(star);
-    motionLayer.add(photon);
 
-    stage.add(motionLayer);
     stage.add(bgLayer);
+    stage.add(motionLayer);
 
     anim.start();
 
@@ -219,10 +252,18 @@ function buildScene() {
 //******************************************************************************
 //************BOILERPLATE
 function updatePositions(frame){
-    t += Math.min(frame.timeDiff,100);
+    dt = Math.min(frame.timeDiff,100);
+    t += dt
     star.x(scaledStarX(t*0.001));
     // console.log('time is ' + t + ', star x is ' + scaledStarX(t));
-    photon.x(scaledPhotonX(t*0.001));
+    photons.forEach( function(photon, i, photonArray) {
+        photon.x( scaledPhotonX( photon.time*0.001, photon.x0 ) );
+        photon.time += dt;
+        if (photon.x() < -100) {
+            photonArray.splice(i, 1);
+            photon.destroy();
+        }
+    });
     motionLayer.draw();
 }
 
