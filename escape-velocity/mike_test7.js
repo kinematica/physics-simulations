@@ -138,6 +138,10 @@
 
     var launch = false;
 
+// This variable will only be used when we force a new animation to start while the projectile is already in motion.
+// It should always be false
+    var launchReset = false;
+
     launchButton.on('click', function() {
 
     	    if (launch === false) {
@@ -150,7 +154,24 @@
 
 		//};
 
+	    }
+
+	    else {
+
+		planet.changeRadius();
+		planet.changeOpacity();
+		projectile.changeVelocity();
+		projectile.moveProjectile(launchReset);
+		escVel = escapeVelocity();
+		gravAccelTimesDistanceSquared = gravityAccel();
+
+		$('#planetRadius').text((Math.round(obj.radius/100)*100).toString()+'km');
+		$('#escapeVelocity').text(Math.round(escapeVelocity()).toString()+'km/s');
+		$('#planetMass').text((Math.round(obj.mass/100)*Math.pow(10,26)).toString()+'kg');
+
 	    };
+
+
 
     });
 
@@ -264,7 +285,7 @@
 	    // - It returns to the planet because its initial velocity was too low
 	    if (currentPos > (fullWidth()-5)) {
 
-	        if (this.init_velocity >= escVel) {
+	        if (this.init_velocity >= Math.round(escVel)) {
 
 			currentPos = fullWidth() + 10;
 			currentVel = 0;
@@ -335,6 +356,8 @@
 	    //															// be 1000000 km from the left edge of the screen 
     	    //var temp = (6.67 * Math.pow(10,-11))*(obj.mass*Math.pow(10,24))/Math.pow((( ((projectile.x()-5)/km_to_pixel_conversion) - 1000000 )*1000),2);
 
+	    // This is just the gravitational constant times the mass of the planet. Since this value will not change while the animation runs, it can be stored
+	    // while the projectile is moving and simply divided by the distance squared, preventing unnecessary calls to this function
 	    var temp = (6.67 * Math.pow(10,-11))*(obj.mass*Math.pow(10,24));
 	    // Divide result by 1000 so that it is in km/s^2
 	    return temp/1000;
@@ -354,7 +377,7 @@
 
     projectile.cache();
     backGroundLayer.add(projectile); 
-    backGroundLayer.add(textFour);
+    //backGroundLayer.add(textFour);
     backGroundLayer.add(planet);
     stage.add(backGroundLayer);
 
@@ -388,6 +411,11 @@
 			escVel = escapeVelocity();
 			gravAccelTimesDistanceSquared = gravityAccel();
 
+			$('#planetRadius').text((Math.round(obj.radius/100)*100).toString()+'km');
+			$('#escapeVelocity').text(Math.round(escapeVelocity()).toString()+'km/s');
+			$('#planetMass').text((Math.round(obj.mass/100)*Math.pow(10,26)).toString()+'kg');
+
+
 
 		}
 
@@ -400,6 +428,10 @@
 			projectile.moveProjectile(launch);
 			escVel = escapeVelocity();
 			gravAccelTimesDistanceSquared = gravityAccel();
+
+			$('#planetRadius').text((Math.round(obj.radius/100)*100).toString()+'km');
+			$('#escapeVelocity').text(Math.round(escapeVelocity()).toString()+'km/s');
+			$('#planetMass').text((Math.round(obj.mass/100)*Math.pow(10,26)).toString()+'kg');
 
 
 
