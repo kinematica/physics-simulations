@@ -4,6 +4,9 @@
 <head>
   <link rel="stylesheet" type="text/css" href="../style.css">
   <link rel="stylesheet" type="text/css" href="style.css">
+
+  <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
   <script src="https://cdn.rawgit.com/konvajs/konva/0.10.0/konva.min.js"></script>
   <script type="text/javascript" src="dat.gui.min.js"></script>
@@ -19,6 +22,17 @@
       background-color: #F0F0F0;
     }
   </style>
+
+  <style media="screen" type="text/css">
+
+  	.box {
+		width:725px;
+		height: 50px;
+		position: fixed;
+		margin-top: -155px;
+		margin-left: 350px;
+	}
+  </style>
 </head>
 <body>
 
@@ -28,17 +42,23 @@
         <div id="container"></div>
 
 	<div id="display">
-            <p>
-                Planet radius: <span id="planetRadius"></span>
-                <br>
-                Planet mass: <span id="planetMass"></span>
-                <br>
-                Starting projectile velocity: <span id="projectileVelocity"></span>
-	    </p>
+            <table class="box" border="1">
+
+	    	<tr>
+			<th><center>\({\scriptsize Initial}\) \({\scriptsize projectile}\) \({\scriptsize velocity}\) \({\scriptsize (}\)\({\scriptsize m \over s}\)\({\scriptsize )}\)</th></center>
+			<th><center>\({\scriptsize Planet}\) \({\scriptsize radius}\) \({\scriptsize (km)}\)</th></center>
+			<th><center>\({\scriptsize Planet}\) \({\scriptsize mass}\) \({\scriptsize (kg)}\)</th></center>
+			<th><center>\({\scriptsize Escape}\) \({\scriptsize velocity}\)</th></center>
+		</tr>
+
+		<tr>
+			<td><center><span id="projectileVelocity"></span>\(\times 10^{5}\)</td></center>
+			<td><center><span id="planetRadius"></span></td></center>
+			<td><center><span id="planetMass"></span>\(\times 10^{24}\)</td></center>
+			<td><center>\(\sqrt{2GM \over r}\)</td></center>
+		</tr>
+	    </table>
         </div>
-
-
-
 
 
         <script src="../js/kinematica/ui.js"></script>
@@ -51,5 +71,4 @@
 
 </body>
 </html>
-
 
