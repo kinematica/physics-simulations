@@ -53,13 +53,17 @@
     var gui = new dat.GUI({width: 710});
 
 
-// When the object velocity is changed, update its value in the projectile object
-	gui.add(obj,'projectile_velocity', 0, 1000).onChange( function() {
-
+// When the radius variable is changed in the GUI, update the size and position of the planet and projectile
+// as well as the gravitational properties of the planet
+    gui.add(obj, 'radius', 6371, 1000000 ).onChange( function() {
+		
 		if (launch === false) {
-
-			projectile.changeVelocity();
-			$('#projectileVelocity').text((Math.round(obj.projectile_velocity)/100).toString());
+			
+			planet.changeRadius();
+			projectile.moveProjectile(launch);
+			escVel = escapeVelocity();
+			gravAccelTimesDistanceSquared = gravityAccel();
+			$('#planetRadius').text((Math.round(obj.radius)).toString());
 
 
 
@@ -69,7 +73,7 @@
 
 
 
-///////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
 /////////////      KONVA STUFF    ////////////////////
 ///////////////////////////////////////////////////////
 
@@ -145,15 +149,15 @@
 
 	    else {
 
-
+		planet.changeRadius();
 
 		projectile.changeVelocity();
 		projectile.moveProjectile(launchReset);
 		escVel = escapeVelocity();
 		gravAccelTimesDistanceSquared = gravityAccel();
 
+		$('#planetRadius').text((Math.round(obj.radius)).toString());
 
-		$('#projectileVelocity').text((Math.round(obj.projectile_velocity)/100).toString());
 
 
 	    };
@@ -212,6 +216,18 @@
 	    text: '_',
 	    fill: 'white'
     });
+
+
+
+// This function will be added to planet so that we can change its radius using the GUI
+    var changeRadius = function() {
+
+            this.setRadius(obj.radius * km_to_pixel_conversion);
+    };
+
+
+    planet.changeRadius = changeRadius;
+
 
 
 // This function will govern the function of the projectile. If launch is false, then the projectile will be fixed to
@@ -378,15 +394,15 @@
 		if (Math.round(projectile.x()) <= Math.round(planet.x() + planet.radius() + 5)) {
 
 			launch = false;
-
+			planet.changeRadius();
 
 			projectile.changeVelocity();
 			projectile.moveProjectile(launch);
 			escVel = escapeVelocity();
 			gravAccelTimesDistanceSquared = gravityAccel();
 
+			$('#planetRadius').text((Math.round(obj.radius)).toString());
 
-			$('#projectileVelocity').text((Math.round(obj.projectile_velocity)/100).toString());
 
 
 
@@ -396,15 +412,15 @@
 		else if (Math.round(projectile.x()) >= Math.round(fullWidth() + 10)) {
 
 			launch = false;
-
+			planet.changeRadius();
 
 			projectile.changeVelocity();
 			projectile.moveProjectile(launch);
 			escVel = escapeVelocity();
 			gravAccelTimesDistanceSquared = gravityAccel();
 
+			$('#planetRadius').text((Math.round(obj.radius)).toString());
 
-			$('#projectileVelocity').text((Math.round(obj.projectile_velocity)/100).toString());
 
 
 
