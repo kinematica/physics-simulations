@@ -320,8 +320,16 @@
     };
 
 
+// This function will change the velocity of the projectile based on the GUI
+    var changeVelocity = function() {
+
+        this.velocity = obj.projectile_velocity;
+	this.init_velocity = obj.projectile_velocity;
+
+    };
 
 
+    projectile.changeVelocity = changeVelocity;
     projectile.moveProjectile = moveProjectile;
 
 
@@ -395,7 +403,7 @@
 			launch = false;
 
 			planet.changeOpacity();
-
+			projectile.changeVelocity();
 			projectile.moveProjectile(launch);
 			escVel = escapeVelocity();
 			gravAccelTimesDistanceSquared = gravityAccel();
@@ -413,7 +421,7 @@
 			launch = false;
 
 			planet.changeOpacity();
-
+			projectile.changeVelocity();
 			projectile.moveProjectile(launch);
 			escVel = escapeVelocity();
 			gravAccelTimesDistanceSquared = gravityAccel();
