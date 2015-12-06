@@ -151,7 +151,7 @@
 
 	    else {
 
-
+		projectile.changeVelocity();
 		planet.changeOpacity();
 		projectile.moveProjectile(launchReset);
 		escVel = escapeVelocity();
