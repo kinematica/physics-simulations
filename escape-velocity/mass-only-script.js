@@ -141,12 +141,17 @@
 	    	
 		launch = true;
 
-		//if (projectile.init_velocity > escVel) {
+		if (projectile.init_velocity >= Math.round(escVel)) {
 
-		//	writeEscape('Escaped!');
+			$('#escaped').text('Escaped!').css('color', 'white');
 
-		//};
+		}
 
+		else {
+
+			$('#escaped').text('Did Not Escape').css('color', '#CE2A0D');
+
+		};
 	    }
 
 	    else {
@@ -158,6 +163,19 @@
 		gravAccelTimesDistanceSquared = gravityAccel();
 
 		$('#planetMass').text((Math.round(obj.mass)).toString());
+		
+		if (projectile.init_velocity >= Math.round(escVel)) {
+
+			$('#escaped').text('Escaped!').css('color','white');
+
+		}
+
+		else {
+
+			$('#escaped').text('Did Not Escape').css('color', '#CE2A0D');
+
+		};
+
 
 	    };
 
@@ -193,7 +211,7 @@
 	    // The y position of the projectile won't change for now, it will always be the planet.y value
 	    y: planet.y(),
 	    radius: 5,
-	    fill: 'red',
+	    fill: '#CE2A0D',
 	    stroke: 'black'
     });
 
@@ -385,6 +403,8 @@
     $('#planetRadius').text((Math.round(obj.radius)).toString());
     $('#projectileVelocity').text((Math.round(obj.projectile_velocity)/100).toString());
     $('#planetMass').text((Math.round(obj.mass)).toString());
+    $('#escaped').text('   ');
+
 
 
 ///////////////////////////////////////////////////////////
@@ -411,6 +431,8 @@
 
 
 			$('#planetMass').text((Math.round(obj.mass)).toString());
+			$('#escaped').text('   ');
+
 
 
 
@@ -429,6 +451,8 @@
 
 
 			$('#planetMass').text((Math.round(obj.mass)).toString());
+			$('#escaped').text('   ');
+
 
 
 		};

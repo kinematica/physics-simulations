@@ -13,7 +13,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.js"></script>
   <meta charset="utf-8">
-  <title>Mike Demo Test</title>
+  <title>Escape Velocity - Variable Radius Demo</title>
   <style>
     body {
       margin: 0;
@@ -45,18 +45,23 @@
             <table class="box" border="1">
 
 	    	<tr>
-			<th><center>\({\scriptsize Initial}\) \({\scriptsize projectile}\) \({\scriptsize velocity}\) \({\scriptsize (}\)\({\scriptsize m \over s}\)\({\scriptsize )}\)</th></center>
+			<th><center>\({\scriptsize Initial}\) \({\scriptsize projectile}\) \({\scriptsize velocity}\) \({\scriptsize \left( m \over s \right)}\) </th></center>
 			<th><center>\({\scriptsize Planet}\) \({\scriptsize radius}\) \({\scriptsize (km)}\)</th></center>
 			<th><center>\({\scriptsize Planet}\) \({\scriptsize mass}\) \({\scriptsize (kg)}\)</th></center>
 			<th><center>\({\scriptsize Escape}\) \({\scriptsize velocity}\)</th></center>
 		</tr>
 
 		<tr>
-			<td><center><span id="projectileVelocity"></span>\(\times 10^{5}\)</td></center>
+			<td><center><span id="projectileVelocity"></span> x 10<sup>5</sup></td></center>
 			<td><center><span id="planetRadius"></span></td></center>
-			<td><center><span id="planetMass"></span>\(\times 10^{24}\)</td></center>
+			<td><center><span id="planetMass"></span> x 10<sup>24</sup></td></center>
 			<td><center>\(\sqrt{2GM \over r}\)</td></center>
 		</tr>
+
+		<tr>
+			<td><center><span id="escaped"></span></td></center>
+		</tr>
+
 	    </table>
         </div>
 
