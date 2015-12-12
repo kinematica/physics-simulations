@@ -100,7 +100,7 @@
 // launch it.
     var launchButton = new Konva.Text( {
     	    // Put the button in the bottom right corner of the screen
-    	    x: fullWidth() - 460,
+    	    x: fullWidth()/2,
 	    y: fullHeight() - 125,
 	    fontFamily: 'Calibri',
 	    fontStyle: 'bold',
@@ -115,7 +115,7 @@
 
 // Background for the button
     var buttonBackground = new Konva.Rect( {
-    	    x: fullWidth() - 460,
+    	    x: fullWidth()/2 - 20,
 	    y: fullHeight() - 125,
 	    width: 500,
 	    height: 150,
