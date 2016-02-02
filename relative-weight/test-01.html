@@ -1,0 +1,95 @@
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  
+  <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  <script src="https://cdn.rawgit.com/konvajs/konva/0.10.0/konva.min.js"></script>
+  <script type="text/javascript" src="dat.gui.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.js"></script>
+  <meta charset="utf-8">
+  <title>Relative Weight Test Demo</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #F0F0F0;
+    }
+  </style>
+
+  <style media="screen" type="text/css">
+
+  	.box {
+		width:725px;
+		height: 50px;
+		position: fixed;
+		margin-top: -105px;
+		margin-left: 365px;
+	}
+  </style>
+
+</head>
+<body>
+
+    <div id="fullscreen" class="html5-fullscreen-api">
+
+
+        <div id="container"></div>
+
+	<div id="display">
+            <table class="box" border="1">
+
+	    	<tr>
+			<th><center>\({\scriptsize Mass \ of \ each \ penny \ (kg)}\)</th></center>
+			<th><center>\({\scriptsize Penny\ altitude\ (m)}\)</th></center>
+			<th><center>\({\scriptsize Acceleration\ due\ to\ gravity\ on\ first\ penny\ (\frac {m}{s^2} \ )}\)</th></center>
+			<th><center>\({\scriptsize Acceleration\ due\ to\ gravity\ on\ second\ penny\ (\frac {m}{s^2} \ ) }\)</th></center>
+		</tr>
+
+		<tr>
+			<td><center>10kg</td></center>
+			<td><center><span id="penny2Height"></span></td></center>
+			<td><center>9.8</td></center>
+			<td><center><span id="pennyGrav"></span></td></center>
+		</tr>
+
+		<tr>
+			<td><center><span id="escaped"></span></td><center>
+		</tr>
+
+	    </table>
+        </div>
+
+
+
+
+
+        <i class="fs-button fa fa-arrows-alt fa-2x"></i>
+        <script src="../js/kinematica/ui.js"></script>
+        <script src="../js/kinematica/math.js"></script>
+        <script src="../js/kinematica/kinematica.js"></script>
+	<script src="demo-test-01.js"></script> 
+
+
+    </div>
+
+</body>
+</html>
+
+
+
+
+
+
