@@ -47,7 +47,7 @@
 	var gui = new dat.GUI({width: 710});
 
 	// Use a logarithmic scale for the height slider
-	gui.add(params, 'height', 0, 8).onChange( function() {
+	gui.add(params, 'height', 0, 6).onChange( function() {
 	
 		penny2.movePenny();
 		planet.changeEcc();
@@ -113,7 +113,7 @@
 		
 		// Scale the x radius of the planet between fullWidth()*12.5 and fullWidth()*12.5/29,
 		// which provides a nice curvature for the most zoomed-out position.
-		this.radiusX( fullW*12.5/Math.pow(29, params.height/8));
+		this.radiusX( fullW*12.5/Math.pow(29, params.height/6));
 
 	};
 
@@ -153,7 +153,7 @@
 
 // Create the function that will move penny2 when the slider is adjusted
 	var movePenny = function() {
-		penny2.y( fullH - 54 - (fullH - 55)/Math.pow(10,(8 - params.height)/3) );
+		penny2.y( fullH - 54 - (fullH - 55)/Math.pow(10,(6 - params.height)/3) );
 
 	};
 
