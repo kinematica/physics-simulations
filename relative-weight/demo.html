@@ -1,0 +1,119 @@
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  
+  <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  <script src="https://cdn.rawgit.com/konvajs/konva/0.10.0/konva.min.js"></script>
+  <script type="text/javascript" src="dat.gui.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.js"></script>
+  <meta charset="utf-8">
+  <title>Relative Weight Demo</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #F0F0F0;
+    }
+  </style>
+
+  <style media="screen" type="text/css">
+
+  	.box {
+		width:725px;
+		height: 50px;
+		position: fixed;
+		margin-top: -105px;
+		margin-left: 1030px;
+	}
+  </style>
+
+</head>
+<body>
+
+    <div id="fullscreen" class="html5-fullscreen-api">
+
+
+        <div id="container"></div>
+
+	<div id="display">
+            <table class="box" border="1">
+
+	    	<tr>
+			<th><center>\({ \ }\)</th></center>
+			<th><center>\({\scriptsize Penny\ 1\ }\)</th></center>
+			<th><center>\({\scriptsize Penny\ 2\ }\)</th></center>
+		</tr>
+
+		<tr>
+			<th><center>\({\scriptsize Mass \ (kg)}\)</th></center>
+			<td><center>10</td></center>
+			<td><center>10</td></center>
+
+		</tr>
+
+
+		<tr>
+			<th><center>\({\scriptsize Altitude\ (m)}\)</th></center>
+			<td><center>1</td></center>
+			<td><center><span id="penny2Height"></span></td></center>
+		
+
+		</tr>
+
+		<tr>
+			
+			<th><center>\({\scriptsize Acceleration\ due\ to\ gravity\ (m/s^2) }\)</th></center>
+			<td><center>9.8</td></center>
+			<td><center><span id="pennyGrav"></span></td></center>
+
+
+		</tr>
+
+		<tr>
+			<th><center>\({\scriptsize Weight\ (lbs) }\)</th></center>
+			<td><center>22.05</td></center>
+			<td><center><span id="pennyWeight"></td></center>
+
+		</tr>
+
+		<tr>
+			<td><center>\(g_0({r_e \over r_e + alt_p})^2 \)</td><center>
+		</tr>
+
+	    </table>
+        </div>
+
+
+
+
+
+
+        <script src="../js/kinematica/ui.js"></script>
+        <script src="../js/kinematica/math.js"></script>
+        <script src="../js/kinematica/kinematica.js"></script>
+	<script src="script.js"></script> 
+
+
+    </div>
+
+</body>
+</html>
+
+
+
+
+
+
