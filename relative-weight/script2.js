@@ -44,7 +44,7 @@
 	};
 
 // Create and populate the GUI
-	var gui = new dat.GUI({width: 710});
+	var gui = new dat.GUI({width: 542});
 
 	// Use a logarithmic scale for the height slider
 	gui.add(params, 'height', 0.000, 6.000, .001).onChange( function() {
