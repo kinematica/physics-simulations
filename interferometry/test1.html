@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" type="text/css" href="../style.css">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  <script type="text/javascript" src="../scripts/dat.gui.min.js"></script>
+  <script src="https://cdn.rawgit.com/konvajs/konva/0.9.5/konva.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.4.5/jquery.mobile.min.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Interferometry Demo</title>
+  <style> 
+  	body {
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+		background-color: #F0F0F0;
+	}
+  </style>
+
+  <style media="screen" type="text/css">
+
+
+  	.box {
+		width: 725px;
+		height: 50px;
+		position: fixed;
+		margin-top: -105px;
+		margin-left: 365px;
+	}
+  </style>
+</head>
+<body>
+
+
+    <!-- take the whole thing fullscreen -->
+    <div id="fullscreen" class="html5-fullscreen-api">
+
+        <!-- container for konva stage -->
+        <div id="container"></div>
+
+
+	<div id="display">
+            <table class="box" border="1">
+
+	    	<tr>
+			<th><center>\({\scriptsize \Delta L_1\ (nm) }\)</th></center>
+			<th><center>\({\scriptsize \Delta L_2\ (nm)}\)</th></center>
+			<th><center>\({\scriptsize Net\ difference\ in\ path\ length\ (nm)}\)</th></center>
+		</tr>
+
+		<tr>
+			<td><center><span id="deltaPathOne"></span></td></center>
+			<td><center><span id="deltaPathTwo"></span></td></center>
+			<td><center><span id="pathDiff"></span></td></center>
+		</tr>
+
+		<tr>
+			<td><center><span id="detected"></span></td><center>
+		</tr>
+
+	    </table>
+        </div>
+
+
+        <script src="../js/kinematica/ui.js"></script>
+        <script src="../js/kinematica/kinematica.js"></script>
+        <script src="test1-script.js"></script>
+
+    </div>
+</body>
+</html>
