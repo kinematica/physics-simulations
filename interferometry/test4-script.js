@@ -563,13 +563,13 @@ var anim = new Konva.Animation( function(frame) {
 
 			// Allow all of the mirrors and non-static beams to be
 			// altered by the GUI in real time
-			mirrorOne.y( (fullH / 1.5) - 320 - params.deltaPathOne/10);
-			beamOneOut.y( (fullH / 1.5) - 110 - params.deltaPathOne/10);
-			beamOneBack.y( (fullH / 1.5) - 309 - params.deltaPathOne/10);
+			mirrorOne.y( (fullH / 1.5) - 320 - params.deltaPathOne/12);
+			beamOneOut.y( (fullH / 1.5) - 110 - params.deltaPathOne/12);
+			beamOneBack.y( (fullH / 1.5) - 309 - params.deltaPathOne/12);
 	
-			mirrorTwo.x( (fullW / 8) + 565 + params.deltaPathTwo/10);
-			beamTwoOut.x( (fullW / 8) + 362 + params.deltaPathTwo/10);
-			beamTwoBack.x( (fullW / 8) + 564 + params.deltaPathTwo/10);
+			mirrorTwo.x( (fullW / 8) + 565 + params.deltaPathTwo/12);
+			beamTwoOut.x( (fullW / 8) + 362 + params.deltaPathTwo/12);
+			beamTwoBack.x( (fullW / 8) + 564 + params.deltaPathTwo/12);
 			
 			// The wavelength in pixels of these waveforms is 49, so we will scale that 49 by our pathDiff
 			beamOneIntImage.x( (fullW / 1.25) - 115 + (49 * (params.deltaPathOne/316)));
@@ -617,13 +617,13 @@ var anim = new Konva.Animation( function(frame) {
 
 	// Allow all of the mirrors and non-static beams to be
 	// altered by the GUI in real time
-	mirrorOne.y( (fullH / 1.5) - 320 - params.deltaPathOne/10);
-	beamOneOut.y( (fullH / 1.5) - 110 - params.deltaPathOne/10);
-	beamOneBack.y( (fullH / 1.5) - 309 - params.deltaPathOne/10);
+	mirrorOne.y( (fullH / 1.5) - 320 - params.deltaPathOne/12);
+	beamOneOut.y( (fullH / 1.5) - 110 - params.deltaPathOne/12);
+	beamOneBack.y( (fullH / 1.5) - 309 - params.deltaPathOne/12);
 
-	mirrorTwo.x( (fullW / 8) + 565 + params.deltaPathTwo/10);
-	beamTwoOut.x( (fullW / 8) + 362 + params.deltaPathTwo/10);
-	beamTwoBack.x( (fullW / 8) + 564 + params.deltaPathTwo/10);
+	mirrorTwo.x( (fullW / 8) + 565 + params.deltaPathTwo/12);
+	beamTwoOut.x( (fullW / 8) + 362 + params.deltaPathTwo/12);
+	beamTwoBack.x( (fullW / 8) + 564 + params.deltaPathTwo/12);
 	
 	// The wavelength in pixels of these waveforms is 49, so we will scale that 49 by our pathDiff
 	beamOneIntImage.x( (fullW / 1.25) - 115 + (49 * (params.deltaPathOne/316)));
