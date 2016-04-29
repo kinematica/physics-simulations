@@ -579,7 +579,8 @@ var anim = new Konva.Animation( function(frame) {
 			beamRecombined.opacity(Math.round(10*pathDiff/316)/10);
 			beamOneCombIntImage.x( (fullW / 1.25) - 115 + (49 * (params.deltaPathOne/316)));
 			beamOneCombIntImage.height( 0 + Math.round(199*(pathDiff/316)));
-
+			beamOneComIntImage.opacity(Math.ceil(Math.floor(pathDiff)/316))
+			
 			$('#deltaPathOne').text(Math.round(params.deltaPathOne)).toString();
 			$('#deltaPathTwo').text(Math.round(params.deltaPathTwo)).toString();
 			$('#pathDiff').text(Math.round(Math.abs(params.deltaPathOne - params.deltaPathTwo))).toString();
@@ -631,6 +632,7 @@ var anim = new Konva.Animation( function(frame) {
 	beamRecombined.opacity(Math.round(10*pathDiff/316)/10);
 	beamOneCombIntImage.x( (fullW / 1.25) - 115 + (49 * (params.deltaPathOne/316)));
 	beamOneCombIntImage.height( 0 + Math.round(199*(pathDiff/316)));
+	beamOneComIntImage.opacity(Math.ceil(Math.floor(pathDiff)/316))
 
 	$('#deltaPathOne').text(Math.round(params.deltaPathOne)).toString();
 	$('#deltaPathTwo').text(Math.round(params.deltaPathTwo)).toString();
