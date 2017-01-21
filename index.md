@@ -6,11 +6,11 @@
 ### Probability and Entropy
 [Ideal Gas in a Container:](gas-container) Put a bunch of gas particles in a container and set them loose in random directions. The more you add, the more likely you are to see them evenly distributed between the two sides of the container! Simply put, there are *more ways to rearrange them if you split them (roughly) evenly*. For example, if you have four particles (let's creatively name them *1*, *2*, *3*, and *4*), there's only one possible combination with all four of them on the left: 1, 2, 3, and 4 on the left, none on the right. But if you split them evenly, there are *six* different ways to arrange them (the "|" symbol splits the left and right sides):
 
-(1 2 &#124; 3 4),<br/>
-(1 3 &#124; 2 4),<br/>
-(1 4 &#124; 2 3),<br/>
-(2 3 &#124; 1 4),<br/>
-(2 4 &#124; 1 3),<br/>
+(1 2 &#124; 3 4)<br/>
+(1 3 &#124; 2 4)<br/>
+(1 4 &#124; 2 3)<br/>
+(2 3 &#124; 1 4)<br/>
+(2 4 &#124; 1 3)<br/>
 (3 4 &#124; 1 2)
 
 The logarithm of the number of possible combinations is called the **entropy**. So, in the above example, the entropy of having two particles on each side is log(6), which is about 1.8. The entropy of having them all on one side gives an entropy of log(1), which is 0. Physical systems like to be in states where they have a lot of choices—in other words, they prefer high entropy states. In this example, that means that you're *much more likely to see the particles be evenly split between the two sides*, and that's especially true as you add more particles! We made this especially visual clear using the brightness of the blue background, which gets brighter as the percentage of balls on each side increases. Notice that, even if all the balls start on the same side, they eventually get pretty evenly mixed, and both sides of the screen stay nearly the same shade of blue!.
