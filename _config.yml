@@ -1,0 +1,8 @@
+title: Kinematica
+description: "Intuitive physics demonstrations, and tools for making them "
+google_analytics: UA-63606206-1
+show_downloads: true
+theme: jekyll-theme-minimal
+
+gems:
+  - jekyll-mentions
